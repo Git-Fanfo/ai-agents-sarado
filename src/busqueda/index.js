@@ -31,7 +31,8 @@ function solve(problem, root) {
     // END CODE HERE
     return { solution, cost }
     //return tree;
-    //HOLA :D
+    //hola como estas main vladimisc
+    //#comiendo_pan
 }
 
 function addNode(problem,tree,posNode){
