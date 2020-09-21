@@ -29,8 +29,8 @@ function solve(problem, root) {
     addNode(problem,tree,0);
 
     // END CODE HERE
-    //return { solution, cost }
-    return tree;
+    return { solution, cost }
+    //return tree;
 }
 
 function addNode(problem,tree,posNode){
