@@ -1,25 +1,25 @@
 const CleanerProblem = require('./CleanerProblem');
 const CleanerAgent = require('./CleanerAgent');
 
-let myProblem = new CleanerProblem({ maxIterations: 12 });
+let myProblem = new CleanerProblem({ maxIterations: 40 });
 
 myProblem.addAgent("Smith", CleanerAgent, { x: 0, y: 2 });
 myProblem.solve(
     /*  
-    [
+[
+    [0,   0,   0,   0],
+    [0, "w", "w",  -1],
+    [0, "w",   0,   0],
+    [0,   0,   0, "w"]]   
+        
+    */
+   [
     [0,   0,   0,  0],
     [0, "w", "w","w"],
     [0,   0,   0,  0],
     [0, "w", "w",  0],
     [0, "w",   0,  0],
-    [0, "w",  -1, "w"]]
-        
-    */
-    [
-    [0,   0,   0,   0],
-    [0, "w", "w",  -1],
-    [0, "w",   0,   0],
-    [0,   0,   0, "w"]], {
+    [0, "w",  -1, "w"]], {
     onFinish: result => {
         let agentID = result.actions[result.actions.length - 1].agentID;
         console.log("agent: " + agentID);

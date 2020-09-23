@@ -27,8 +27,8 @@ function solve(problem, root) {
     let tree = [{pos: root, cost: 0, parent: null, action: null}];
     
     addNode(problem,tree,tree.length-1);
-    console.log("Ordenar: " + ordenarArbol(tree));
-
+    //console.log("Ordenar: " + JSON.parse(JSON.stringify(ordenarArbol(tree))));
+    tree = ordenarArbol(tree);
     // END CODE HERE
     //return { solution, cost }
     return tree;
@@ -85,7 +85,7 @@ function ordenarArbol(tree) {
       {
         if ( tree[j].cost > tree[j + 1].cost ) 
         {
-          [ tree[j].cost, tree[j + 1].cost ] = [ tree[j + 1].cost, tree[j].cost ];
+          [ tree[j], tree[j + 1] ] = [ tree[j + 1], tree[j] ];
         }
       }
     }
