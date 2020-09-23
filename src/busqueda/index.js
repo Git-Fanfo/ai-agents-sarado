@@ -22,26 +22,52 @@ function testGoal(node, problem) {
 function solve(problem, root) {
     let solution = [];
     let cost = 0;
-    
+
     // START CODE HERE
-    let tree = [{pos: root, cost: 0, parent: null, action: null}];
-    
-    addNode(problem,tree,tree.length-1);
-    //console.log("Ordenar: " + JSON.parse(JSON.stringify(ordenarArbol(tree))));
-    tree = ordenarArbol(tree);
+
+   // Para imprimir los Arrays.
+   let created = [];
+   let posPath = [];
+
+    // Array inicial en la posicion del problema.
+    let tree = [{pos: root, cost: 0, parent: null, action: null}];  
+   
+    // Crea los nodos y convierte el Array tree en un arbol, donde la posicion 0 es el camino de menor costo.
+    while(!testGoal(tree[0],problem))
+    {
+        addNode(problem,tree);
+        tree = ordenarArbol(tree);
+        created.push("["+tree[0].pos+"]");
+    }
+
+    // Declaracion de cost para ser impresa.
+    cost = tree[0].cost;
+
+    // Inicializar la primera hoja del arbol para hacer el bucle while
+    index = tree[0];
+
+    // Crea el Array recorriendo los padres desde la hoja en la posicion 0 del Array tree
+    while(index.parent != null){
+        solution.unshift(index.action);
+        posPath.push("["+index.pos+"]");
+        index = index.parent;
+    }
+
+    console.log("Created: "+"["+created+"]");
+    console.log("PosPath: " +"["+posPath+"]");
     // END CODE HERE
-    //return { solution, cost }
-    return tree;
+    return { solution, cost }
 }
 
-function recursiva(){
-
-}
-
-function addNode(problem,tree,posNode){
-    //aqui
-    //tree[posNode].expanded = true;
-
+/**
+     * Se encarga de añadir los posibles caminos a seguir para una posicion en maze. En este caso toma
+     * la primera posicion, pues es la de menor costo segun nuestro BubbleSort.
+     * @param {Object} problem
+     * @param {Array} tree
+ */
+function addNode(problem,tree){
+    posNode=0;
+    
     //Extender arriba?
     if(tree[posNode].pos[0]-1 >= 0 && "D" != tree[posNode].action)
     {   
@@ -77,6 +103,10 @@ function addNode(problem,tree,posNode){
     tree.splice(posNode,1)
 }
 
+/**
+     * Se encarga de ordenar el arreglo creado en addNode siguiendo el algoritmo BubbleSort.
+     * @param {Array} tree
+ */
 function ordenarArbol(tree) {
     const tamaño = tree.length;
     for (let i = 0; i < tamaño; i++ ) 
@@ -90,22 +120,7 @@ function ordenarArbol(tree) {
       }
     }
     return tree;
-};
-
-/*function ordenarArbol(tree){
-    sortTree = tree[0];
-    for(var i = 1; i < tree.length; i++)
-    {
-        if (tree[i] < sortTree[])
-        {
-            sortTree.push(tree[i]);
-        }
-    }
-}*/
-
-
-test = [{sara : 1},{juan : 2}];
-test.push({pitochu : 1});
+}
 
 console.log(solve(problem, start));
 
