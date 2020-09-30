@@ -25,9 +25,9 @@ class CleanerAgent extends Agent {
             "w,w,0,0,0": "RIGHT",
             "w,w,0,w,0": "RIGHT",
             "w,w,w,0,0": "DOWN",
-            "default": "TAKE"
-    };
-        */      
+            "default": "TAKE"};
+        */
+       
        //Mundo inicial generado por el raton
         this.generatedWorld = [[0,0,0],[0,0,0],[0,0,0]];
         //Posicion en coordenadas cartesianas
