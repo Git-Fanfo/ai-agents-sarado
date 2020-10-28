@@ -77,15 +77,16 @@ async function fetchingData() {
     console.log(player);
     console.log(colors.brightRed('Boxes:'));
     console.log(boxes);
-    console.log(colors.brightRed('Meta:'));
+    console.log(colors.brightRed('Goal:'));
     console.log(goal);
     
-
+    
     // De aquí para abajo estan los maravillosos Arboles
     const OPERATORS = ["U", "D", "L", "R"];// Priotity in case
 
     let root = {
         pos: player,
+        pos_Box :boxes,
         level: 0,
         parent: null,
         action: null
@@ -93,15 +94,30 @@ async function fetchingData() {
 
     let problem = { maze, goal };
 
-    // Avoid come back
-    // root: {pos: [3, 0], cost: 0, parent: null, action: null}
-    // node: {pos: [x, y], cost: number, parent: node, action: string}
+    console.log(colors.brightGreen('Test Goal: '+testGoal(root,problem)));
+
     function testGoal(node, problem) {
         //console.log(problem);
-        if (node.pos[0] == problem.goal[0] && node.pos[1] == problem.goal[1]) {
-            return true;
+        let aux = node.pos_Box;
+        aux = aux.map(
+                function(x) {
+                    return compare(x,problem)
+            })
+        return !aux.includes(false);
+    }
+
+    function compare(node,problem){
+        let psx = node[0];
+        let psy = node[1];
+
+        let bool = false;
+
+        for(let i=0;i<problem.goal.length;i++){
+            if(psx==problem.goal[i][0] && psy==problem.goal[i][1]){
+                bool = true;
+            }
         }
-        return false;
+        return bool;
     }
 
     function solve(problem, nodo) {
