@@ -63,39 +63,30 @@ async function fetchingData() {
     const processoFetched = await processLineByLine();
     console.log(colors.brightMagenta('\nFetching...\n'));
 
-    let level = processoFetched[0];
+    let maze = processoFetched[0];
     let player = processoFetched[1][0];
     processoFetched[1].shift();
     let boxes = processoFetched[1];
 
-    let meta = setGoal(level);
+    let goal = setGoal(maze);
 
     console.log(colors.brightYellow('Entries:\n'));
     console.log(colors.brightRed('Maze:'));
-    console.log(level);
+    console.log(maze);
     console.log(colors.brightRed('Player:'));
     console.log(player);
     console.log(colors.brightRed('Boxes:'));
     console.log(boxes);
     console.log(colors.brightRed('Meta:'));
-    console.log(meta);
+    console.log(goal);
     
 
     // De aquí para abajo estan los maravillosos Arboles
-
-    let maze = 
-            [[2, 1, 1], 
-            [2, 3, 3], 
-            [2, 3, 1], 
-            [1, 1, 1]];
-
-    let start = [3, 0];
-    let goal = [0, 2];
     const OPERATORS = ["U", "D", "L", "R"];// Priotity in case
 
     let root = {
-        pos: start,
-        cost: 0,
+        pos: player,
+        level: 0,
         parent: null,
         action: null
     };
@@ -200,7 +191,7 @@ async function fetchingData() {
             }
             //console.log("PosPath: " +"["+posPath+"]");    
     }
-    console.log(solve(problem, root));
+    //console.log(solve(problem, root));
 }
 
 fetchingData();
