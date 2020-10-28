@@ -2,8 +2,6 @@ const fs = require('fs');
 const readline = require('readline');
 const colors = require('colors');
 
-
-
 async function processLineByLine() {
     const arrayInput = [];
     const level = [];
@@ -19,21 +17,27 @@ async function processLineByLine() {
 
   for await (const line of rl) {
     // Each line in input.txt will be successively available here as `line`.
-    arrayInput.push(`${line}`);     
+    arrayInput.push(`${line}`);
   }
   //console.log(arrayInput);
     try {
         console.log(colors.brightMagenta('Loading data...\n'));
         //Crear el maze
         for(var i = 0;i < arrayInput.length && arrayInput[i].indexOf(",")==-1;i=0){
-            level.push(arrayOfArrays(i))
+            level.push(arrayOfArrays(i).map(
+                function(x) {
+                    if(x==0){return parseInt(x, 10)}
+                    else return x
+             }))
             arrayInput.shift();
             }
         
         //Crear las posiciones
         for(var i=0;i<arrayInput.length;i++){
             if(arrayInput[i] != []){
-                positions.push(arrayOfArrays(i))
+                positions.push(arrayOfArrays(i).map(function(x) {
+                    return parseInt(x, 10);
+                 }))
             }        
         }
     
@@ -46,11 +50,10 @@ async function processLineByLine() {
             }
             return place;
         }        
-        
+        console.log(colors.brightCyan('Data has been loaded succesfully\n'));
     } catch(err) {
         console.log(colors.brightRed('An error has ocurred loading the data: '+ err +' \nCheck your input\n'));
     } finally{
-        console.log(colors.brightCyan('Data has been loaded succesfully\n'));
         return [level,positions];  
     }    
 }
@@ -59,10 +62,13 @@ async function fetchingData() {
     console.log(colors.brightMagenta('\nAwaiting for data...\n'));
     const processoFetched = await processLineByLine();
     console.log(colors.brightMagenta('\nFetching...\n'));
+
     let level = processoFetched[0];
     let player = processoFetched[1][0];
     processoFetched[1].shift();
     let boxes = processoFetched[1];
+
+    let meta = setGoal(level);
 
     console.log(colors.brightYellow('Entries:\n'));
     console.log(colors.brightRed('Maze:'));
@@ -71,6 +77,8 @@ async function fetchingData() {
     console.log(player);
     console.log(colors.brightRed('Boxes:'));
     console.log(boxes);
+    console.log(colors.brightRed('Meta:'));
+    console.log(meta);
     
 
     // De aquí para abajo estan los maravillosos Arboles
@@ -197,6 +205,18 @@ async function fetchingData() {
 
 fetchingData();
 
+
+function setGoal(maze){
+    let goal = [];
+    for(let i = 0;i<maze.length;i++){
+        for(let j = 0;j<maze[1].length;j++){
+            if(maze[i][j]=='X'){
+                goal.push([i,j]);
+            }            
+        }
+    }
+    return goal;
+}
 /*
 for(var i = 0;array[i].chartAt[1] || array[i].chartAt[1] != ',';i++){
     console.log(array[i]);
