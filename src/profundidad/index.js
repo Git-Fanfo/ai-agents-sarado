@@ -15,20 +15,16 @@ async function processLineByLine() {
   // Note: we use the crlfDelay option to recognize all instances of CR LF
   // ('\r\n') in input.txt as a single line break.
 
-  for await (const line of rl) {
-    // Each line in input.txt will be successively available here as `line`.
-    arrayInput.push(`${line}`);
-  }
+    for await (const line of rl) {
+        // Each line in input.txt will be successively available here as `line`.
+        arrayInput.push(`${line}`);
+    }
   //console.log(arrayInput);
     try {
         console.log(colors.brightMagenta('Loading data...\n'));
         //Crear el maze
         for(var i = 0;i < arrayInput.length && arrayInput[i].indexOf(",")==-1;i=0){
-            level.push(arrayOfArrays(i).map(
-                function(x) {
-                    if(x==0){return parseInt(x, 10)}
-                    else return x
-             }))
+            level.push(arrayOfArrays(i))
             arrayInput.shift();
             }
         
