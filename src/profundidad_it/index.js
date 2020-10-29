@@ -1,62 +1,63 @@
-const fs = require('fs');
-const readline = require('readline');
 const colors = require('colors');
 
+const { once } = require('events');
+const { createReadStream } = require('fs');
+const { createInterface } = require('readline');
+
+    
 async function processLineByLine() {
     const arrayInput = [];
     const level = [];
     const positions = [];
-  const fileStream = fs.createReadStream(process.argv[2]);
-
-  const rl = readline.createInterface({
-    input: fileStream,
-    crlfDelay: Infinity
-  });
-  // Note: we use the crlfDelay option to recognize all instances of CR LF
-  // ('\r\n') in input.txt as a single line break.
-
-  for await (const line of rl) {
-    // Each line in input.txt will be successively available here as `line`.
-    arrayInput.push(`${line}`);
-  }
-  //console.log(arrayInput);
     try {
-        console.log(colors.brightMagenta('Loading data...\n'));
-        //Crear el maze
-        for(var i = 0;i < arrayInput.length && arrayInput[i].indexOf(",")==-1;i=0){
-            level.push(arrayOfArrays(i).map(
-                function(x) {
-                    if(x==0){return parseInt(x, 10)}
-                    else return x
-             }))
-            arrayInput.shift();
+      const rl = createInterface({
+        input: createReadStream(process.argv[2]),
+        crlfDelay: Infinity
+      });
+  
+      rl.on('line', (line) => {
+          arrayInput.push(`${line}`);
+        // Process the line.
+      });
+      await once(rl, 'close');
+      try {
+            console.log(colors.brightMagenta('Loading data...\n'));
+            //Crear el maze
+            for(var i = 0;i < arrayInput.length && arrayInput[i].indexOf(",")==-1;i=0){
+                level.push(arrayOfArrays(i))
+                arrayInput.shift();
+                }
+            
+            //Crear las posiciones
+            for(var i=0;i<arrayInput.length;i++){
+                if(arrayInput[i] != []){
+                    positions.push(arrayOfArrays(i).map(function(x) {
+                        return parseInt(x, 10);
+                    }))
+                }        
             }
         
-        //Crear las posiciones
-        for(var i=0;i<arrayInput.length;i++){
-            if(arrayInput[i] != []){
-                positions.push(arrayOfArrays(i).map(function(x) {
-                    return parseInt(x, 10);
-                 }))
-            }        
-        }
-    
-        function arrayOfArrays(i) {
-            place = [];
-            for(var j = 0;j<arrayInput[i].length;j++){
-                if(arrayInput[i][j]!=','){
-                    place.push(arrayInput[i][j]);   
+            function arrayOfArrays(i) {
+                place = [];
+                for(var j = 0;j<arrayInput[i].length;j++){
+                    if(arrayInput[i][j]!=','){
+                        place.push(arrayInput[i][j]);   
+                    }
                 }
-            }
-            return place;
-        }        
-        console.log(colors.brightCyan('Data has been loaded succesfully\n'));
-    } catch(err) {
-        console.log(colors.brightRed('An error has ocurred loading the data: '+ err +' \nCheck your input\n'));
-    } finally{
-        return [level,positions];  
-    }    
-}
+                return place;
+            }        
+            console.log(colors.brightCyan('Data has been loaded succesfully\n'));
+        } catch(err) {
+            console.log(colors.brightRed('An error has ocurred loading the data: '+ err +' \nCheck your input\n'));
+        } finally{
+            //console.log(level)
+            return [level,positions];  
+        }  
+      
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
 async function fetchingData() {
     console.log(colors.brightMagenta('\nAwaiting for data...\n'));

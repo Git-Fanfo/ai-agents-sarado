@@ -1,62 +1,67 @@
-const fs = require('fs');
-const readline = require('readline');
 const colors = require('colors');
 
+const { once } = require('events');
+const { createReadStream } = require('fs');
+const { createInterface } = require('readline');
+
+    
 async function processLineByLine() {
     const arrayInput = [];
     const level = [];
     const positions = [];
-  const fileStream = fs.createReadStream(process.argv[2]);
-
-  const rl = readline.createInterface({
-    input: fileStream,
-    crlfDelay: Infinity
-  });
-  // Note: we use the crlfDelay option to recognize all instances of CR LF
-  // ('\r\n') in input.txt as a single line break.
-
-  for await (const line of rl) {
-    // Each line in input.txt will be successively available here as `line`.
-    arrayInput.push(`${line}`);
-  }
-  //console.log(arrayInput);
     try {
-        console.log(colors.brightMagenta('Loading data...\n'));
-        //Crear el maze
-        for(var i = 0;i < arrayInput.length && arrayInput[i].indexOf(",")==-1;i=0){
-            level.push(arrayOfArrays(i).map(
-                function(x) {
-                    if(x==0){return parseInt(x, 10)}
-                    else return x
-             }))
-            arrayInput.shift();
+      const rl = createInterface({
+        input: createReadStream(process.argv[2]),
+        crlfDelay: Infinity
+      });
+  
+      rl.on('line', (line) => {
+          arrayInput.push(`${line}`);
+        // Process the line.
+      });
+      await once(rl, 'close');
+      try {
+            console.log(colors.brightMagenta('Loading data...\n'));
+            //Crear el maze
+            for(var i = 0;i < arrayInput.length && arrayInput[i].indexOf(",")==-1;i=0){
+                level.push(arrayOfArrays(i).map(
+                    function(x) {
+                        if(x==0){return parseInt(x, 10)}
+                        else return x
+                }))
+                arrayInput.shift();
+                }
+            
+            //Crear las posiciones
+            for(var i=0;i<arrayInput.length;i++){
+                if(arrayInput[i] != []){
+                    positions.push(arrayOfArrays(i).map(function(x) {
+                        return parseInt(x, 10);
+                    }))
+                }        
             }
         
-        //Crear las posiciones
-        for(var i=0;i<arrayInput.length;i++){
-            if(arrayInput[i] != []){
-                positions.push(arrayOfArrays(i).map(function(x) {
-                    return parseInt(x, 10);
-                 }))
-            }        
-        }
-    
-        function arrayOfArrays(i) {
-            place = [];
-            for(var j = 0;j<arrayInput[i].length;j++){
-                if(arrayInput[i][j]!=','){
-                    place.push(arrayInput[i][j]);   
+            function arrayOfArrays(i) {
+                place = [];
+                for(var j = 0;j<arrayInput[i].length;j++){
+                    if(arrayInput[i][j]!=','){
+                        place.push(arrayInput[i][j]);   
+                    }
                 }
-            }
-            return place;
-        }        
-        console.log(colors.brightCyan('Data has been loaded succesfully\n'));
-    } catch(err) {
-        console.log(colors.brightRed('An error has ocurred loading the data: '+ err +' \nCheck your input\n'));
-    } finally{
-        return [level,positions];  
-    }    
-}
+                return place;
+            }        
+            console.log(colors.brightCyan('Data has been loaded succesfully\n'));
+        } catch(err) {
+            console.log(colors.brightRed('An error has ocurred loading the data: '+ err +' \nCheck your input\n'));
+        } finally{
+            //console.log(level)
+            return [level,positions];  
+        }  
+      
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
 async function fetchingData() {
     console.log(colors.brightMagenta('\nAwaiting for data...\n'));
@@ -67,8 +72,10 @@ async function fetchingData() {
     let player = processoFetched[1][0];
     processoFetched[1].shift();
     let boxes = processoFetched[1];
-
     let goal = setGoal(maze);
+
+    //Borrar?
+    let created = [];
 
     console.log(colors.brightYellow('Entries:\n'));
     console.log(colors.brightRed('Maze:'));
@@ -86,7 +93,7 @@ async function fetchingData() {
 
     let root = {
         pos: player,
-        pos_Box :boxes,
+        pos_Box : boxes,
         level: 0,
         parent: null,
         action: null
@@ -95,6 +102,7 @@ async function fetchingData() {
     let problem = { maze, goal };
 
     console.log(colors.brightGreen('Test Goal: '+testGoal(root,problem)));
+    //console.log(colors.brightGreen('Estoy en: '+maze[player[0]][player[1]-1]));
 
     function testGoal(node, problem) {
         //console.log(problem);
@@ -119,22 +127,24 @@ async function fetchingData() {
         }
         return bool;
     }
-
     function solve(problem, nodo) {
         let solution = [];
-        let cost = 0;
         let nodos = [];
         let nodoEvaluado = nodo;
 
-        while (!testGoal(nodoEvaluado, problem) ) {
+        const limite = 3;
+
+        while (!testGoal(nodoEvaluado, problem) &&  nodoEvaluado.level < limite) {
             agregarNodos(problem.maze,nodoEvaluado,nodos);
-            nodoEvaluado = sacarMinimo(nodos);
-            //console.log(nodoEvaluado);
-        } 
-        cost = nodoEvaluado.cost;
-        console.log('Costo: '+cost);
+            nodoEvaluado = nodos[0];
+            nodos.shift();
+            //console.log(nodos[0]);
+        }
+
+        //console.log(nodos);
+        //console.log('creados:'+created)
         trazarRuta(nodoEvaluado,solution);
-        return { solution, cost }
+        return { solution }
     }
 
     /**
@@ -145,43 +155,116 @@ async function fetchingData() {
              * @param {Array} nodos
          */
     function agregarNodos(maze,padre,nodos) {
-        if(padre.pos[0] > 0){
+        if(avanzar(maze,padre,'U')){
             let fila = padre.pos[0]-1;
             let colum = padre.pos[1];
-            let costo = maze[fila][colum] + padre.cost;
-            nodos.push(crearNodo([fila,colum], costo, padre, "U"))
+            let niveles = padre.level + 1;
+            let cajas = padre.pos_Box;
+            nodos.push(crearNodo([fila,colum], cajas, niveles, padre, "U"))
+            console.log('box in U: '+ box_Address(padre.pos,padre.pos_Box,1,'U'));
+            created.push('U');
         }
-        if(padre.pos[0] < maze.length-1){ 
+        if(avanzar(maze,padre,'D')){ 
             let fila = padre.pos[0]+1;
             let colum = padre.pos[1];
-            let costo = maze[fila][colum] + padre.cost;
-            nodos.push(crearNodo([fila,colum], costo, padre, "D"))
+            let niveles = padre.level + 1;
+            let cajas = padre.pos_Box;
+            created.push('D');
+            console.log('box in D: '+ box_Address(padre.pos,padre.pos_Box,1,'D'));
+            nodos.push(crearNodo([fila,colum],cajas, niveles, padre, "D"))
         }
-        if(padre.pos[1] > 0){
+        if(avanzar(maze,padre,'L')){
             let fila = padre.pos[0];
             let colum = padre.pos[1]-1;
-            let costo = maze[fila][colum] + padre.cost;
-            nodos.push(crearNodo([fila,colum], costo, padre, "L"))
+            let niveles = padre.level + 1;
+            let cajas = padre.pos_Box;
+            created.push('L');
+            console.log('box in L: '+ box_Address(padre.pos,padre.pos_Box,1,'L'));
+            nodos.push(crearNodo([fila,colum],cajas, niveles, padre, "L"))
         }
-        if(padre.pos[1] < maze[0].length){
+        //console.log('voy a la derecha: '+avanzar(maze,padre,'R'))
+        if(avanzar(maze,padre,'R')){
             let fila = padre.pos[0];
             let colum = padre.pos[1]+1;
-            let costo = maze[fila][colum] + padre.cost;
-            nodos.push(crearNodo([fila,colum], costo, padre, "R"))
+            let niveles = padre.level + 1;
+            let cajas = padre.pos_Box;
+            created.push('R');
+            console.log('box in R: '+ box_Address(padre.pos,padre.pos_Box,1,'R'));
+            nodos.push(crearNodo([fila,colum],cajas, niveles, padre, "R"))
         }
 
-        //return nodos;
+        return nodos;
     }
 
-    function crearNodo(pos,cost,parent,action) {
+    function crearNodo(pos,cajas,level,parent,action) {
         let node = {
             pos: pos,
-            cost: cost,
+            pos_Box :cajas,
+            level: level,
             parent: parent,
             action: action
         };
         return node;
     };
+
+    function avanzar(maze,padre,dir){
+        let caja_caja = false;
+        switch (dir) {
+            case 'U':                
+                return padre.pos[0] > 0 && wall_Address(maze,padre,'U') && !caja_caja;
+            case 'D':           
+                return padre.pos[0] < maze.length - 1 && wall_Address(maze,padre,'D');
+            case 'L':              
+                return padre.pos[1] > 0 && wall_Address(maze,padre,'L');
+            case 'R':               
+                return padre.pos[1] < maze[0].length && wall_Address(maze,padre,'R');
+          }
+    }
+
+    function wall_Address(maze,padre,dir){
+        switch (dir) {
+            case 'U':                
+                try {
+                    return maze[padre.pos[0]-1][padre.pos[1]]!= 'W';
+                } catch (error) {
+                    return false
+                }          
+            case 'D': 
+                try {
+                    return maze[padre.pos[0]+1][padre.pos[1]]!= 'W';
+                } catch (error) {
+                   return false
+                }                           
+            case 'L':                
+                try {
+                    return maze[padre.pos[0]][padre.pos[1]-1]!= 'W';
+                } catch (error) {
+                    return false
+                }    
+            case 'R':  
+                try {
+                   return maze[padre.pos[0]][padre.pos[1]+1]!= 'W';
+                } catch (error) {
+                   return false
+                }      
+          }
+    }
+
+    function box_Address(pos,array,dist,dir){
+        for(let i=0;i<array.length;i++)
+            switch (dir) {
+                case 'U':
+                    //console.log(pos[0]-1+','+array[i][0] +','+ pos[1]+','+array[i][1]);
+                    return pos[0]-dist==array[i][0] && pos[1]==array[i][1];
+                case 'D':
+                    //console.log(pos[0]+1+','+array[i][0] +','+ pos[1]+','+array[i][1]);
+                    return pos[0]+dist==array[i][0] && pos[1]==array[i][1];
+                case 'L':
+                    return pos[0]==array[i][0] && pos[1]-dist==array[i][1];
+                case 'R':
+                    return pos[0]==array[i][0] && pos[1]+dist==array[i][1];
+            }
+    }
 
     function sacarMinimo(nodos){
         let min = { cost: 999999 };
@@ -207,7 +290,7 @@ async function fetchingData() {
             }
             //console.log("PosPath: " +"["+posPath+"]");    
     }
-    //console.log(solve(problem, root));
+    console.log(solve(problem, root));
 }
 
 fetchingData();
