@@ -210,14 +210,18 @@ async function fetchingData() {
     function avanzar(maze,padre,dir){
         let caja_caja = false;
         switch (dir) {
-            case 'U':                
+            case 'U':
+                caja_caja =  box_Address(padre.pos,padre.pos_Box,1,'U') && box_Address(padre.pos,padre.pos_Box,2,'U')           
                 return padre.pos[0] > 0 && wall_Address(maze,padre,'U') && !caja_caja;
             case 'D':           
-                return padre.pos[0] < maze.length - 1 && wall_Address(maze,padre,'D');
+                caja_caja =  box_Address(padre.pos,padre.pos_Box,1,'D') && box_Address(padre.pos,padre.pos_Box,2,'D')
+                return padre.pos[0] < maze.length - 1 && wall_Address(maze,padre,'D') && !caja_caja;
             case 'L':              
-                return padre.pos[1] > 0 && wall_Address(maze,padre,'L');
+                caja_caja =  box_Address(padre.pos,padre.pos_Box,1,'L') && box_Address(padre.pos,padre.pos_Box,2,'L')
+                return padre.pos[1] > 0 && wall_Address(maze,padre,'L') && !caja_caja;
             case 'R':               
-                return padre.pos[1] < maze[0].length && wall_Address(maze,padre,'R');
+                caja_caja =  box_Address(padre.pos,padre.pos_Box,1,'R') && box_Address(padre.pos,padre.pos_Box,2,'R')
+                return padre.pos[1] < maze[0].length && wall_Address(maze,padre,'R') && !caja_caja;
           }
     }
 
@@ -251,19 +255,25 @@ async function fetchingData() {
     }
 
     function box_Address(pos,array,dist,dir){
-        for(let i=0;i<array.length;i++)
-            switch (dir) {
-                case 'U':
-                    //console.log(pos[0]-1+','+array[i][0] +','+ pos[1]+','+array[i][1]);
-                    return pos[0]-dist==array[i][0] && pos[1]==array[i][1];
-                case 'D':
-                    //console.log(pos[0]+1+','+array[i][0] +','+ pos[1]+','+array[i][1]);
-                    return pos[0]+dist==array[i][0] && pos[1]==array[i][1];
-                case 'L':
-                    return pos[0]==array[i][0] && pos[1]-dist==array[i][1];
-                case 'R':
-                    return pos[0]==array[i][0] && pos[1]+dist==array[i][1];
+        let bool = false;
+        for(let i=0;i<array.length && !bool;i++){
+            if(dir == 'U'){
+                bool = pos[0]-dist==array[i][0] && pos[1]==array[i][1];
             }
+
+            if(dir == 'D'){                
+                bool = (pos[0]+dist==array[i][0] && pos[1]==array[i][1]);
+            }
+
+            if(dir == 'L'){
+                bool = pos[0]==array[i][0] && pos[1]-dist==array[i][1];
+            }
+
+            if(dir == 'R'){
+                bool = pos[0]==array[i][0] && pos[1]+dist==array[i][1];
+            }
+        }
+        return bool;
     }
 
     function sacarMinimo(nodos){
