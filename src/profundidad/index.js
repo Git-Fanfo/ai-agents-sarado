@@ -3,7 +3,7 @@ const colors = require('colors');
 const { once } = require('events');
 const { createReadStream } = require('fs');
 const { createInterface } = require('readline');
-
+var box2move;
 async function processLineByLine() {
     const arrayInput = [];
     const level = [];
@@ -153,11 +153,13 @@ async function fetchingData() {
 
         while (!testGoal(nodoEvaluado, problem)) {
             console.log(nodoEvaluado.level);
-            if (nodoEvaluado.level < 10) {
+            if (nodoEvaluado.level < 4) {
                 agregarNodos(problem.maze, nodoEvaluado, nodos);
             }
             if (nodos[0] == null) {
-                console.log('No hay solución');
+                solution = 'No hay solución';
+                level = nodoEvaluado.level;
+                return { solution, level };
                 break;
             }
             nodoEvaluado = nodos.shift();
@@ -170,12 +172,13 @@ async function fetchingData() {
     }
 
     function moveBox(Boxes, box2move, side) {
+        console.log('boxes: ', Boxes);
         switch (side) {
             case 'U':
                 Boxes[box2move][0]--;
                 break;
             case 'D':
-                Boxes[box2move][0]++;
+                Boxes[box2move][0] + 1;
                 break;
             case 'L':
                 Boxes[box2move][1]--;
@@ -188,6 +191,7 @@ async function fetchingData() {
                 console.log("something's wrong with moveBox");
                 break;
         }
+        console.log('boxes after move: ', Boxes);
     }
 
     function crearNodo(pos, pos_Box, level, parent, action) {
@@ -209,15 +213,15 @@ async function fetchingData() {
      * @param {Array} nodos
      */
     function agregarNodos(maze, padre, nodos) {
-        let box2move;
-        let canMov = canMove(maze, padre, 'R', box2move);
+        let canMov = canMove(maze, padre, 'R');
         if (canMov > 0) {
             let row = padre.pos[0];
             let column = padre.pos[1] + 1;
             let pos_Box = padre.pos_Box;
-            if (canMov == 2) {
+            // console.log('valorR : ', canMov);
+            if (canMov === 2) {
                 pos_Box = [];
-                for (let i = 0; i < pos_Box.length; i++) {
+                for (let i = 0; i < padre.pos_Box.length; i++) {
                     pos_Box.push(padre.pos_Box[i].slice());
                 }
                 moveBox(pos_Box, box2move, 'R');
@@ -227,14 +231,15 @@ async function fetchingData() {
             );
         }
 
-        canMov = canMove(maze, padre, 'L', box2move);
+        canMov = canMove(maze, padre, 'L');
         if (canMov > 0) {
             let row = padre.pos[0];
             let column = padre.pos[1] - 1;
             let pos_Box = padre.pos_Box;
-            if (canMov == 2) {
+            console.log('valorL : ', canMov);
+            if (canMov === 2) {
                 pos_Box = [];
-                for (let i = 0; i < pos_Box.length; i++) {
+                for (let i = 0; i < padre.pos_Box.length; i++) {
                     pos_Box.push(padre.pos_Box[i].slice());
                 }
                 moveBox(pos_Box, box2move, 'L');
@@ -245,16 +250,21 @@ async function fetchingData() {
             );
         }
 
-        canMov = canMove(maze, padre, 'D', box2move);
+        canMov = canMove(maze, padre, 'D');
         if (canMov > 0) {
             let row = padre.pos[0] + 1;
             let column = padre.pos[1];
             let pos_Box = padre.pos_Box;
-            if (canMov == 2) {
+            console.log('valorD : ', canMov);
+            if (canMov === 2) {
                 pos_Box = [];
-                for (let i = 0; i < pos_Box.length; i++) {
+                console.log('pre For');
+                for (let i = 0; i < padre.pos_Box.length; i++) {
+                    console.log('in For');
                     pos_Box.push(padre.pos_Box[i].slice());
                 }
+                console.log('post For');
+                console.log(pos_Box);
                 moveBox(pos_Box, box2move, 'D');
             }
 
@@ -263,14 +273,15 @@ async function fetchingData() {
             );
         }
 
-        canMov = canMove(maze, padre, 'U', box2move);
+        canMov = canMove(maze, padre, 'U');
         if (canMov > 0) {
             let row = padre.pos[0] - 1;
             let column = padre.pos[1];
             let pos_Box = padre.pos_Box;
-            if (canMov == 2) {
+            console.log('valorU : ', canMov);
+            if (canMov === 2) {
                 pos_Box = [];
-                for (let i = 0; i < pos_Box.length; i++) {
+                for (let i = 0; i < padre.pos_Box.length; i++) {
                     pos_Box.push(padre.pos_Box[i].slice());
                 }
                 moveBox(pos_Box, box2move, 'U');
@@ -282,7 +293,7 @@ async function fetchingData() {
         }
     }
 
-    function compareBox(paPosY, paPosX, pos_Box, box2move) {
+    function compareBox(paPosY, paPosX, pos_Box) {
         for (let i = 0; i < pos_Box.length; i++) {
             if (paPosY == pos_Box[i][0] && paPosX == pos_Box[i][1]) {
                 box2move = i;
@@ -292,7 +303,7 @@ async function fetchingData() {
         return false;
     }
 
-    function isBoxAtSide(padre, side, plusOne, box2move) {
+    function isBoxAtSide(padre, side, plusOne) {
         //complete
         let paPos = {
             y: padre.pos[0],
@@ -300,50 +311,22 @@ async function fetchingData() {
         };
         switch (side) {
             case 'U':
-                if (
-                    compareBox(
-                        paPos.y - 1 - plusOne,
-                        paPos.x,
-                        padre.pos_Box,
-                        box2move
-                    )
-                ) {
+                if (compareBox(paPos.y - 1 - plusOne, paPos.x, padre.pos_Box)) {
                     return true;
                 }
                 break;
             case 'D':
-                if (
-                    compareBox(
-                        paPos.y + 1 + plusOne,
-                        paPos.x,
-                        padre.pos_Box,
-                        box2move
-                    )
-                ) {
+                if (compareBox(paPos.y + 1 + plusOne, paPos.x, padre.pos_Box)) {
                     return true;
                 }
                 break;
             case 'L':
-                if (
-                    compareBox(
-                        paPos.y,
-                        paPos.x - 1 - plusOne,
-                        padre.pos_Box,
-                        box2move
-                    )
-                ) {
+                if (compareBox(paPos.y, paPos.x - 1 - plusOne, padre.pos_Box)) {
                     return true;
                 }
                 break;
             case 'R':
-                if (
-                    compareBox(
-                        paPos.y,
-                        paPos.x + 1 + plusOne,
-                        padre.pos_Box,
-                        box2move
-                    )
-                ) {
+                if (compareBox(paPos.y, paPos.x + 1 + plusOne, padre.pos_Box)) {
                     return true;
                 }
                 break;
@@ -401,11 +384,11 @@ async function fetchingData() {
         return min;
     }
 
-    function canMove(maze, padre, side, box2move) {
-        if (isBoxAtSide(padre, side, 0, box2move)) {
+    function canMove(maze, padre, side) {
+        if (isBoxAtSide(padre, side, 0)) {
             if (isWallAtSide(maze, padre, side, 1)) {
                 return 0;
-            } else if (isBoxAtSide(padre, side, 1, box2move)) {
+            } else if (isBoxAtSide(padre, side, 1)) {
                 return 0;
             } else return 2;
         } else {
