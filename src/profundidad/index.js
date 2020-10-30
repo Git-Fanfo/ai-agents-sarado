@@ -152,8 +152,14 @@ async function fetchingData() {
         let nodoEvaluado = nodo;
 
         while (!testGoal(nodoEvaluado, problem)) {
-            agregarNodos(problem.maze, nodoEvaluado, nodos);
             console.log(nodoEvaluado.level);
+            if (nodoEvaluado.level < 10) {
+                agregarNodos(problem.maze, nodoEvaluado, nodos);
+            }
+            if (nodos[0] == null) {
+                console.log('No hay solución');
+                break;
+            }
             nodoEvaluado = nodos.shift();
             //console.log(nodoEvaluado);
         }
@@ -203,9 +209,6 @@ async function fetchingData() {
      * @param {Array} nodos
      */
     function agregarNodos(maze, padre, nodos) {
-        if (padre.level > 63) {
-            return;
-        }
         let box2move;
         let canMov = canMove(maze, padre, 'R', box2move);
         if (canMov > 0) {
