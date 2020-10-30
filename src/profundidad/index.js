@@ -104,9 +104,23 @@ async function fetchingData() {
         action: null,
     };
 
+    /*let hijoBox = [root.pos_Box[0].slice(), root.pos_Box[1].slice()];
+    moveBox(hijoBox, 0, 'U');
+
+    console.log(colors.brightRed('padre:'));
+    console.log(root.pos);
+    console.log(colors.brightRed('Boxes:'));
+    console.log(root.pos_Box);
+    console.log(colors.brightRed('hijo:'));
+    console.log(root.pos);
+    console.log(colors.brightRed('Boxes:'));
+    console.log(hijoBox);*/
+
     let problem = { maze, goal };
 
-    console.log(colors.brightGreen('Test Goal: ' + testGoal(root, problem)));
+    console.log(solve(problem, root));
+
+    //console.log(colors.brightGreen('Test Goal: ' + testGoal(root, problem)));
 
     function testGoal(node, problem) {
         //console.log(problem);
@@ -133,19 +147,52 @@ async function fetchingData() {
 
     function solve(problem, nodo) {
         let solution = [];
-        let cost = 0;
+        //let cost = 0;
         let nodos = [];
         let nodoEvaluado = nodo;
 
         while (!testGoal(nodoEvaluado, problem)) {
             agregarNodos(problem.maze, nodoEvaluado, nodos);
-            nodoEvaluado = sacarMinimo(nodos);
+            console.log(nodoEvaluado.level);
+            nodoEvaluado = nodos.shift();
             //console.log(nodoEvaluado);
         }
-        cost = nodoEvaluado.cost;
-        console.log('Costo: ' + cost);
+        level = nodoEvaluado.level;
+        console.log('level: ' + level);
         trazarRuta(nodoEvaluado, solution);
-        return { solution, cost };
+        return { solution, level };
+    }
+
+    function moveBox(Boxes, box2move, side) {
+        switch (side) {
+            case 'U':
+                Boxes[box2move][0]--;
+                break;
+            case 'D':
+                Boxes[box2move][0]++;
+                break;
+            case 'L':
+                Boxes[box2move][1]--;
+                break;
+            case 'R':
+                Boxes[box2move][1]++;
+                break;
+
+            default:
+                console.log("something's wrong with moveBox");
+                break;
+        }
+    }
+
+    function crearNodo(pos, pos_Box, level, parent, action) {
+        let node = {
+            pos: pos,
+            pos_Box: pos_Box,
+            level: level + 1,
+            parent: parent,
+            action: action,
+        };
+        return node;
     }
 
     /**
@@ -156,42 +203,186 @@ async function fetchingData() {
      * @param {Array} nodos
      */
     function agregarNodos(maze, padre, nodos) {
-        if (padre.pos[0] > 0) {
-            let fila = padre.pos[0] - 1;
-            let colum = padre.pos[1];
-            let costo = maze[fila][colum] + padre.cost;
-            nodos.push(crearNodo([fila, colum], costo, padre, 'U'));
+        if (padre.level > 63) {
+            return;
         }
-        if (padre.pos[0] < maze.length - 1) {
-            let fila = padre.pos[0] + 1;
-            let colum = padre.pos[1];
-            let costo = maze[fila][colum] + padre.cost;
-            nodos.push(crearNodo([fila, colum], costo, padre, 'D'));
-        }
-        if (padre.pos[1] > 0) {
-            let fila = padre.pos[0];
-            let colum = padre.pos[1] - 1;
-            let costo = maze[fila][colum] + padre.cost;
-            nodos.push(crearNodo([fila, colum], costo, padre, 'L'));
-        }
-        if (padre.pos[1] < maze[0].length) {
-            let fila = padre.pos[0];
-            let colum = padre.pos[1] + 1;
-            let costo = maze[fila][colum] + padre.cost;
-            nodos.push(crearNodo([fila, colum], costo, padre, 'R'));
+        let box2move;
+        let canMov = canMove(maze, padre, 'R', box2move);
+        if (canMov > 0) {
+            let row = padre.pos[0];
+            let column = padre.pos[1] + 1;
+            let pos_Box = padre.pos_Box;
+            if (canMov == 2) {
+                pos_Box = [];
+                for (let i = 0; i < pos_Box.length; i++) {
+                    pos_Box.push(padre.pos_Box[i].slice());
+                }
+                moveBox(pos_Box, box2move, 'R');
+            }
+            nodos.unshift(
+                crearNodo([row, column], pos_Box, padre.level, padre, 'R')
+            );
         }
 
-        //return nodos;
+        canMov = canMove(maze, padre, 'L', box2move);
+        if (canMov > 0) {
+            let row = padre.pos[0];
+            let column = padre.pos[1] - 1;
+            let pos_Box = padre.pos_Box;
+            if (canMov == 2) {
+                pos_Box = [];
+                for (let i = 0; i < pos_Box.length; i++) {
+                    pos_Box.push(padre.pos_Box[i].slice());
+                }
+                moveBox(pos_Box, box2move, 'L');
+            }
+
+            nodos.unshift(
+                crearNodo([row, column], pos_Box, padre.level, padre, 'L')
+            );
+        }
+
+        canMov = canMove(maze, padre, 'D', box2move);
+        if (canMov > 0) {
+            let row = padre.pos[0] + 1;
+            let column = padre.pos[1];
+            let pos_Box = padre.pos_Box;
+            if (canMov == 2) {
+                pos_Box = [];
+                for (let i = 0; i < pos_Box.length; i++) {
+                    pos_Box.push(padre.pos_Box[i].slice());
+                }
+                moveBox(pos_Box, box2move, 'D');
+            }
+
+            nodos.unshift(
+                crearNodo([row, column], pos_Box, padre.level, padre, 'D')
+            );
+        }
+
+        canMov = canMove(maze, padre, 'U', box2move);
+        if (canMov > 0) {
+            let row = padre.pos[0] - 1;
+            let column = padre.pos[1];
+            let pos_Box = padre.pos_Box;
+            if (canMov == 2) {
+                pos_Box = [];
+                for (let i = 0; i < pos_Box.length; i++) {
+                    pos_Box.push(padre.pos_Box[i].slice());
+                }
+                moveBox(pos_Box, box2move, 'U');
+            }
+
+            nodos.unshift(
+                crearNodo([row, column], pos_Box, padre.level, padre, 'U')
+            );
+        }
     }
 
-    function crearNodo(pos, cost, parent, action) {
-        let node = {
-            pos: pos,
-            cost: cost,
-            parent: parent,
-            action: action,
+    function compareBox(paPosY, paPosX, pos_Box, box2move) {
+        for (let i = 0; i < pos_Box.length; i++) {
+            if (paPosY == pos_Box[i][0] && paPosX == pos_Box[i][1]) {
+                box2move = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function isBoxAtSide(padre, side, plusOne, box2move) {
+        //complete
+        let paPos = {
+            y: padre.pos[0],
+            x: padre.pos[1],
         };
-        return node;
+        switch (side) {
+            case 'U':
+                if (
+                    compareBox(
+                        paPos.y - 1 - plusOne,
+                        paPos.x,
+                        padre.pos_Box,
+                        box2move
+                    )
+                ) {
+                    return true;
+                }
+                break;
+            case 'D':
+                if (
+                    compareBox(
+                        paPos.y + 1 + plusOne,
+                        paPos.x,
+                        padre.pos_Box,
+                        box2move
+                    )
+                ) {
+                    return true;
+                }
+                break;
+            case 'L':
+                if (
+                    compareBox(
+                        paPos.y,
+                        paPos.x - 1 - plusOne,
+                        padre.pos_Box,
+                        box2move
+                    )
+                ) {
+                    return true;
+                }
+                break;
+            case 'R':
+                if (
+                    compareBox(
+                        paPos.y,
+                        paPos.x + 1 + plusOne,
+                        padre.pos_Box,
+                        box2move
+                    )
+                ) {
+                    return true;
+                }
+                break;
+            default:
+                console.log("something's wrong with the switch");
+                break;
+        }
+        return false;
+    }
+
+    function isWallAtSide(maze, padre, side, plusOne) {
+        //completed
+        let paPos = {
+            y: padre.pos[0],
+            x: padre.pos[1],
+        };
+        switch (side) {
+            case 'U':
+                if (maze[paPos.y - 1 - plusOne][paPos.x] == 'W') {
+                    return true;
+                }
+                break;
+            case 'D':
+                if (maze[paPos.y + 1 + plusOne][paPos.x] == 'W') {
+                    return true;
+                }
+                break;
+            case 'L':
+                if (maze[paPos.y][paPos.x - 1 - plusOne] == 'W') {
+                    return true;
+                }
+                break;
+            case 'R':
+                if (maze[paPos.y][paPos.x + 1 + plusOne] == 'W') {
+                    return true;
+                }
+                break;
+            default:
+                console.log("something's wrong with the switch");
+                break;
+        }
+        return false;
     }
 
     function sacarMinimo(nodos) {
@@ -205,6 +396,18 @@ async function fetchingData() {
         }
         nodos.splice(index, 1);
         return min;
+    }
+
+    function canMove(maze, padre, side, box2move) {
+        if (isBoxAtSide(padre, side, 0, box2move)) {
+            if (isWallAtSide(maze, padre, side, 1)) {
+                return 0;
+            } else if (isBoxAtSide(padre, side, 1, box2move)) {
+                return 0;
+            } else return 2;
+        } else {
+            return isWallAtSide(maze, padre, side, 0) ? 0 : 1;
+        }
     }
 
     function trazarRuta(nodo, array) {
