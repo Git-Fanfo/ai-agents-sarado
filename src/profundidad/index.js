@@ -104,23 +104,9 @@ async function fetchingData() {
         action: null,
     };
 
-    /*let hijoBox = [root.pos_Box[0].slice(), root.pos_Box[1].slice()];
-    moveBox(hijoBox, 0, 'U');
-
-    console.log(colors.brightRed('padre:'));
-    console.log(root.pos);
-    console.log(colors.brightRed('Boxes:'));
-    console.log(root.pos_Box);
-    console.log(colors.brightRed('hijo:'));
-    console.log(root.pos);
-    console.log(colors.brightRed('Boxes:'));
-    console.log(hijoBox);*/
-
     let problem = { maze, goal };
 
     console.log(solve(problem, root));
-
-    //console.log(colors.brightGreen('Test Goal: ' + testGoal(root, problem)));
 
     function testGoal(node, problem) {
         //console.log(problem);
@@ -152,8 +138,8 @@ async function fetchingData() {
         let nodoEvaluado = nodo;
 
         while (!testGoal(nodoEvaluado, problem)) {
-            console.log(nodoEvaluado.level);
-            if (nodoEvaluado.level < 6) {
+            //console.log('level', nodoEvaluado.level);
+            if (nodoEvaluado.level < 15) {
                 agregarNodos(problem.maze, nodoEvaluado, nodos);
             }
             if (nodos[0] == null) {
@@ -166,7 +152,6 @@ async function fetchingData() {
             //console.log(nodoEvaluado);
         }
         level = nodoEvaluado.level;
-        console.log('level: ' + level);
         trazarRuta(nodoEvaluado, solution);
         return { solution, level };
     }
@@ -236,7 +221,7 @@ async function fetchingData() {
             let row = padre.pos[0];
             let column = padre.pos[1] - 1;
             let pos_Box = padre.pos_Box;
-            console.log('valorL : ', canMov);
+            //console.log('valorL : ', canMov);
             if (canMov === 2) {
                 pos_Box = [];
                 for (let i = 0; i < padre.pos_Box.length; i++) {
@@ -255,16 +240,12 @@ async function fetchingData() {
             let row = padre.pos[0] + 1;
             let column = padre.pos[1];
             let pos_Box = padre.pos_Box;
-            console.log('valorD : ', canMov);
+            //console.log('valorD : ', canMov);
             if (canMov === 2) {
                 pos_Box = [];
-                console.log('pre For');
                 for (let i = 0; i < padre.pos_Box.length; i++) {
-                    console.log('in For');
                     pos_Box.push(padre.pos_Box[i].slice());
                 }
-                console.log('post For');
-                console.log(pos_Box);
                 moveBox(pos_Box, box2move, 'D');
             }
 
@@ -278,7 +259,7 @@ async function fetchingData() {
             let row = padre.pos[0] - 1;
             let column = padre.pos[1];
             let pos_Box = padre.pos_Box;
-            console.log('valorU : ', canMov);
+            //console.log('valorU : ', canMov);
             if (canMov === 2) {
                 pos_Box = [];
                 for (let i = 0; i < padre.pos_Box.length; i++) {
