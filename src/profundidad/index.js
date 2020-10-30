@@ -153,7 +153,7 @@ async function fetchingData() {
 
         while (!testGoal(nodoEvaluado, problem)) {
             console.log(nodoEvaluado.level);
-            if (nodoEvaluado.level < 4) {
+            if (nodoEvaluado.level < 6) {
                 agregarNodos(problem.maze, nodoEvaluado, nodos);
             }
             if (nodos[0] == null) {
@@ -178,7 +178,7 @@ async function fetchingData() {
                 Boxes[box2move][0]--;
                 break;
             case 'D':
-                Boxes[box2move][0] + 1;
+                Boxes[box2move][0]++;
                 break;
             case 'L':
                 Boxes[box2move][1]--;
