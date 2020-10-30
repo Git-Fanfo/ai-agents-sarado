@@ -106,7 +106,11 @@ async function fetchingData() {
 
     let problem = { maze, goal };
 
+    var start = new Date().getTime();
     console.log(solve(problem, root));
+    var end = new Date().getTime();
+    var time = (end - start) / 1000;
+    console.log('time: ', time, 's');
 
     function testGoal(node, problem) {
         //console.log(problem);
@@ -131,15 +135,63 @@ async function fetchingData() {
         return bool;
     }
 
+    function avoidRepeatedState(node) {
+        if (node.level < 2) {
+            return true;
+        }
+        let nodePP = node.parent.parent;
+        if (!(nodePP.pos[0] == node.pos[0] && nodePP.pos[1] == node.pos[1])) {
+            return true;
+        }
+        for (let i = 0; i < node.pos_Box.length; i++) {
+            if (
+                nodePP.pos_Box[i][0] == node.pos_Box[i][0] &&
+                nodePP.pos_Box[i][1] == node.pos_Box[i][1]
+            ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     function solve(problem, nodo) {
         let solution = [];
         //let cost = 0;
         let nodos = [];
         let nodoEvaluado = nodo;
-
         while (!testGoal(nodoEvaluado, problem)) {
-            //console.log('level', nodoEvaluado.level);
-            if (nodoEvaluado.level < 15) {
+            /* console.log('\n\nnodo: ', nodoEvaluado.pos);
+            console.log(
+                'parent-action: ',
+                nodoEvaluado.parent == null ? null : nodoEvaluado.parent.action
+            );
+            console.log('action: ', nodoEvaluado.action);
+            console.log('level: ', nodoEvaluado.level, '\n');
+            if (nodoEvaluado.level > 1) {
+                console.log(
+                    'parent pos: ',
+                    nodoEvaluado.parent.parent.pos,
+                    '\npos:        ',
+                    nodoEvaluado.pos,
+                    '\nparent posBox: ',
+                    nodoEvaluado.parent.parent.pos_Box,
+                    '\nposBox:        ',
+                    nodoEvaluado.pos_Box
+                );
+                if (
+                    nodoEvaluado.level > 1 &&
+                    nodoEvaluado.parent.parent.pos[0] == nodoEvaluado.pos[0] &&
+                    nodoEvaluado.parent.parent.pos[1] == nodoEvaluado.pos[1]
+                ) {
+                    console.log('pos=parentPos');
+                }
+            } */
+            if (
+                // no sobre pase el límite de profundidad.
+                nodoEvaluado.level < 40 &&
+                // evite acciones repetitivas.
+                avoidRepeatedState(nodoEvaluado)
+            ) {
                 agregarNodos(problem.maze, nodoEvaluado, nodos);
             }
             if (nodos[0] == null) {
@@ -151,13 +203,14 @@ async function fetchingData() {
             nodoEvaluado = nodos.shift();
             //console.log(nodoEvaluado);
         }
+
         level = nodoEvaluado.level;
         trazarRuta(nodoEvaluado, solution);
         return { solution, level };
     }
 
     function moveBox(Boxes, box2move, side) {
-        console.log('boxes: ', Boxes);
+        //console.log('boxes: ', Boxes);
         switch (side) {
             case 'U':
                 Boxes[box2move][0]--;
@@ -176,7 +229,7 @@ async function fetchingData() {
                 console.log("something's wrong with moveBox");
                 break;
         }
-        console.log('boxes after move: ', Boxes);
+        //console.log('boxes after move: ', Boxes);
     }
 
     function crearNodo(pos, pos_Box, level, parent, action) {
