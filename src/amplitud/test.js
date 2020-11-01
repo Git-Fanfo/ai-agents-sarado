@@ -32,13 +32,37 @@ let arrayStatusQ = [ {
                         pos_player : [7,1],
                         pos_Box_E : [[2,2]]
                     }]
-
+/*
+console.log('box_Adress: '+box_Address(player,boxes,1,'U'));
                     console.log(colors.brightGreen('Comparación de estados'))
 console.log(colors.brightGreen('Comparación de estados'))
 saved_State(root,arrayStatus)
 gameover(boxes,lab);
 console.log(colors.brightGreen('cajitas: '+moverCaja(0,boxes,'L')))
+*/
 
+let nodos = []
+
+console.log(colors.brightCyan(nodos))
+nodos.push(boxes)
+console.log(colors.brightCyan(nodos))
+let listaCajas = boxes
+listaCajas = [[0,0],[1,2]]
+//listaCajas[0] = [0,0]
+nodos.push(listaCajas)
+console.log(colors.brightCyan(nodos))
+console.log(colors.brightGreen(insertarArray([1,2,5,4],9,3)))
+
+
+function insertarArray (array,index,insertar){
+    let finale = []
+    for (let i = 0; i < array.length; i++) {
+        if(i==index){
+            finale.push(insertar)
+        }else finale.push(array[i])
+    }
+    return finale
+}
 
 function moverCaja(index,cajas,dir){
     switch (dir) {
@@ -255,4 +279,9 @@ function saved_State(status, arrayStatus){
     console.log(colors.brightGreen('funcion'));
     console.log(bool)
     return bool;
+}
+
+
+function dummie (dato){
+    dato = 777
 }

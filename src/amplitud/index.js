@@ -134,26 +134,48 @@ async function fetchingData() {
         let nodoEvaluado = nodo;
         let expandidos = [];
 
-        const limite = 4;
+        let nivelActual = 0
+
+        const limite = 64;
         //&&  nodoEvaluado.level <= limite
         while (!testGoal(nodoEvaluado, problem)&&  nodoEvaluado.level <= limite) {
             //console.log('estados guardados:'+visited_States[0])
             //console.log('evaluado?: '+saved_State(nodoEvaluado,visited_States))
                     
-            console.log(colors.brightGreen('expande '+nodoEvaluado.action))
-            
+            //console.log(colors.brightGreen('expande '+nodoEvaluado.action))
+                  
+            while(gameover(nodoEvaluado.pos_Box,maze) || saved_State(nodoEvaluado,visited_States)){
+                //console.log(colors.brightGreen('YAPERDISTE AAAAAAAAAAAAAAAAAAAAAAAAA'))
+                            
+                created.shift();
+                visited_States.push(crearEstado(nodoEvaluado.pos,nodoEvaluado.pos_Box))  
+
+                if(nodos.length == 0){
+                    //console.log(colors.brightRed('No se encontraron respuestas ome gonorrea ome'))
+                    break
+                }
+
+                nodoEvaluado = nodos[0]; 
+                expandidos.push([nodoEvaluado.level,nodoEvaluado.pos,nodoEvaluado.action])
+                nodos.shift();                              
+            } 
             /*
-            while(saved_State(nodoEvaluado,visited_States)){
-                console.log(nodoEvaluado.pos +' y '+ nodoEvaluado.pos_Box)
-                if(nodos[0]!=null){
-                    nodoEvaluado = nodos[0];
-                }else break;              
+            while(saved_State(nodoEvaluado)){
+                console.log(colors.brightGreen('YAPERDISTE AAAAAAAAAAAAAAAAAAAAAAAAA'))
+                nodoEvaluado = nodos[0];             
                 created.shift();
                 nodos.shift();                
-            }
-            */            
+            } 
+            */           
+            
             created.shift();
             agregarNodos(problem.maze,nodoEvaluado,nodos);
+
+            if(nodos.length == 0){
+                console.log(colors.brightRed('No se encontraron respuestas ome gonorrea ome'))
+                break
+            }
+
             visited_States.push(crearEstado(nodoEvaluado.pos,nodoEvaluado.pos_Box))                        
             
             nodoEvaluado = nodos[0];
@@ -163,8 +185,15 @@ async function fetchingData() {
             nodos.shift();
             //created.shift();
 
-            console.log(colors.brightMagenta('Queue'))
-            console.log(created)
+            //console.log(colors.brightMagenta('Queue'))
+            //console.log(created)
+            if(nodoEvaluado.level>nivelActual){
+                nivelActual++
+                console.log(colors.brightMagenta('Nivel: '+nodoEvaluado.level))
+            }
+            
+
+            
         }
 
         //console.log(expandidos);
@@ -186,129 +215,103 @@ async function fetchingData() {
          */
     function agregarNodos(maze,padre,nodos) {
         
-        if(avanzar(maze,padre,'U')){     
-            let fila = padre.pos[0]-1;
-            let colum = padre.pos[1];
-            let niveles = padre.level + 1;
-            let cajas = setCajas(padre.pos_Box);
-                if(box_Address(padre.pos,padre.pos_Box,1,'U')){
-                    let bool = false;
-                    for(let i=0;i<padre.pos_Box.length && !bool;i++){
-                        bool = fila==cajas[i][0] && colum==cajas[i][1];
-                        if(bool){
-                            cajas = moverCaja(i,padre.pos_Box,'U')
-                            console.log(colors.brightYellow('movi una caja! ahora esta en: '+cajas));
-                        }
-                    }
-                }
-                if(!saved_State(crearNodo([fila,colum], cajas, niveles, padre, "U"),visited_States)){
-                    nodos.push(crearNodo([fila,colum], cajas, niveles, padre, "U"))
-                    created.push('U');
-                    console.log(colors.brightYellow('mis cajas estan en: '+cajas));
-                    console.log(colors.brightYellow('mi padre tiene sus cajas en: '+padre.pos_Box));
-                }            
-        }
-
-        if(avanzar(maze,padre,'D')){ 
-            let fila = padre.pos[0]+1;
-            let colum = padre.pos[1];
-            let niveles = padre.level + 1;
-            let cajas = setCajas(padre.pos_Box);
-                if(box_Address(padre.pos,padre.pos_Box,1,'D')){
-                    let bool = false;
-                    for(let i=0;i<padre.pos_Box.length && !bool;i++){
-                        bool = fila==padre.pos_Box[i][0] && colum==padre.pos_Box[i][1];
-                        if(bool){
-                            cajas = moverCaja(i,padre.pos_Box,'D')
-                            console.log(colors.brightYellow('movi una caja! ahora esta en: '+cajas));
-                        }
-                    }
-                }        
-            //console.log('ABAJO');
-            if (!saved_State(crearNodo([fila,colum],cajas, niveles, padre, "D"),visited_States)) {
-                nodos.push(crearNodo([fila,colum],cajas, niveles, padre, "D"))
-                created.push('D');
-                console.log(colors.brightYellow('mis cajas estan en: '+cajas));
-                console.log(colors.brightYellow('mi padre tiene sus cajas en: '+padre.pos_Box));
-            }            
-        }
-        if(avanzar(maze,padre,'L') && !saved_State(padre,visited_States)){
-            let fila = padre.pos[0];
-            let colum = padre.pos[1]-1;
-            let niveles = padre.level + 1;
-            let cajas = setCajas(padre.pos_Box);
-                if(box_Address(padre.pos,padre.pos_Box,1,'L')){
-                    let bool = false;
-                    for(let i=0;i<padre.pos_Box.length && !bool;i++){
-                        bool = fila==padre.pos_Box[i][0] && colum==padre.pos_Box[i][1];
-                        if(bool){                            
-                            cajas = moverCaja(i,padre.pos_Box,'L')
-                            console.log(colors.brightYellow('movi una caja! ahora esta en: '+cajas));
-                        }                
-                    }
-                }       
-            if (!saved_State(crearNodo([fila,colum],cajas, niveles, padre, "L"),visited_States)) {
-                nodos.push(crearNodo([fila,colum],cajas, niveles, padre, "L"))
-                created.push('L');    
-                console.log(colors.brightYellow('mis cajas estan en: '+cajas));
-                console.log(colors.brightYellow('mi padre tiene sus cajas en: '+padre.pos_Box));
-            }          
-        }
-        //console.log('voy a la derecha: '+avanzar(maze,padre,'R'))
-        if(avanzar(maze,padre,'R') && !saved_State(padre,visited_States)){
-            let fila = padre.pos[0];
-            let colum = padre.pos[1]+1;
-            let niveles = padre.level + 1;
-            let cajas = setCajas(padre.pos_Box);
-                if(box_Address(padre.pos,padre.pos_Box,1,'R')){
-                    let bool = false;
-                    for(let i=0;i<padre.pos_Box.length && !bool;i++){
-                        bool = fila==padre.pos_Box[i][0] && colum==padre.pos_Box[i][1];
-                        if(bool){
-                            cajas = moverCaja(i,padre.pos_Box,'R')
-                            console.log(colors.brightYellow('movi una caja! ahora esta en: '+cajas));
-                        }
-                    }
-                }                
-                if (!saved_State(crearNodo([fila,colum],cajas, niveles, padre, "R"),visited_States)) {
-                    nodos.push(crearNodo([fila,colum],cajas, niveles, padre, "R"))
-                    created.push('R');
-                    console.log(colors.brightYellow('mis cajas estan en: '+cajas));
-                    console.log(colors.brightYellow('mi padre tiene sus cajas en: '+padre.pos_Box));
-                }
-        }
+        NOT_crearNodo (maze,padre,nodos,'U')
+        NOT_crearNodo (maze,padre,nodos,'D')
+        NOT_crearNodo (maze,padre,nodos,'L')
+        NOT_crearNodo (maze,padre,nodos,'R')        
 
         return nodos;
     }
 
-    function moverCaja(index,cajas,dir){
+    function NOT_crearNodo (maze,padre,nodos,dir){
+        
+        if(avanzar(maze,padre,dir)){
+            let fila = cambiarPos(padre,dir)[0];
+            let colum = cambiarPos(padre,dir)[1];
+            let niveles = padre.level + 1;
+            let listaCajas = padre.pos_Box;
+            let bool = true
+            //console.log(colors.brightMagenta('mi padre es: ' +padre.pos + ' - ' + padre.pos_Box + ' - ' + padre.action))
+             
+            if(box_Address(padre.pos,listaCajas,1,dir)){  
+                                 
+                //console.log(colors.brightYellow('Encontre una caja '+dir+', estoy en: '+[padre.pos[0],padre.pos[1]+' mis cajas son: '+ listaCajas]));
+                for(let i=0;i<listaCajas.length && bool;i++){
+                    if(fila == listaCajas[i][0] && colum == listaCajas[i][1]){
+                        //console.log(colors.brightGreen('La caja es: '+listaCajas[i]));
+                        listaCajas = insertarArray(listaCajas,i,cambiarPosCaja(listaCajas,i,dir))
+                        // NUNCA JAMAS HACER ESTO EN LA VIDA GRACIAS listaCajas[i] = cambiarPosCaja(listaCajas,i,dir)
+                        bool = false
+                        //console.log(colors.brightGreen('La nueva posición de caja es: '+listaCajas[i]));
+                    }
+                }
+            }   
+            if (!saved_State(crearNodo([fila,colum], listaCajas, niveles, padre, dir),visited_States)) {
+                nodos.push(crearNodo([fila,colum], listaCajas, niveles, padre, dir))
+                //nodos.push({})
+                //console.log(colors.brightMagenta(dir +' ' +listaCajas))
+                created.push(dir);
+            }//else console.log('No se puede crear: '+dir+' -> estado ya visitado')
+        }//else console.log('No se puede crear: '+dir)
+    }
+
+    function insertarArray (array,index,insertar){
+        let finale = []
+        for (let i = 0; i < array.length; i++) {
+            if(i==index){
+                finale.push(insertar)
+            }else finale.push(array[i])
+        }
+        return finale
+    }
+
+    function avoidRepepatedState (node){
+    
         switch (dir) {
-            case 'U':
-                    cajas[index][0] = cajas[index][0]-1;
-                    cajas[index][1] = cajas[index][1];
-                return cajas;
-            case 'D':
-                    cajas[index][0] = cajas[index][0]+1;
-                    cajas[index][1] = cajas[index][1];
-                return cajas;
+            case 'U':                    
+                return 'D';
+            case 'D':                    
+                return 'U';
             case 'L':
-                    cajas[index][0] = cajas[index][0];
-                    cajas[index][1] = cajas[index][1]-1;
-                return cajas;
+                return 'R';
             case 'R':
-                    cajas[index][0] = cajas[index][0];
-                    cajas[index][1] = cajas[index][1]+1;
-                return cajas;
+                return 'L';
         }
     }
 
-    function crearNodo(pos,cajas,level,parent,action) {
+    function cambiarPos(padre,dir){
+        switch (dir) {
+            case 'U':                    
+                return [padre.pos[0]-1,padre.pos[1]];
+            case 'D':                    
+                return [padre.pos[0]+1,padre.pos[1]];
+            case 'L':
+                return [padre.pos[0],padre.pos[1]-1];
+            case 'R':
+                return [padre.pos[0],padre.pos[1]+1];
+        }
+    }
+
+    function cambiarPosCaja(array,index,dir){
+        switch (dir) {
+            case 'U':                    
+                return [array[index][0]-1,array[index][1]];
+            case 'D':                    
+                return [array[index][0]+1,array[index][1]];
+            case 'L':
+                return [array[index][0],array[index][1]-1];
+            case 'R':
+                return [array[index][0],array[index][1]+1];
+        }
+    }
+
+    function crearNodo(postion,position_boxes,nivel,padre,dir) {
         let node = {
-            pos: pos,
-            pos_Box :cajas,
-            level: level,
-            parent: parent,
-            action: action
+            pos: postion,
+            pos_Box :position_boxes,
+            level: nivel,
+            parent: padre,
+            action: dir
         };
         return node;
     };
@@ -352,6 +355,19 @@ async function fetchingData() {
                 return padre.pos[1] < maze[0].length && !wall_Address(maze,padre.pos,1,'R') && !caja_caja && !caja_pared;// && !saved_State(padre,visited_States);// && !caja_lost;
           }
     }
+
+    if (!(padre.pos[0] < maze.length - 1)) {
+                console.log(colors.brightRed('Fallo en limites: '+ padre.pos[0] < maze.length - 1))
+            }
+            if (wall_Address(maze,padre.pos,1,'D')) {
+                console.log(colors.brightRed('Fallo en paredes: '+ !wall_Address(maze,padre.pos,1,'D')))
+            }
+            if (caja_caja) {
+                console.log(colors.brightRed('Fallo en caja_caja: '+ !caja_caja))
+            }
+            if (caja_pared) {
+                console.log(colors.brightRed('Fallo en caja_pared: '+ !caja_pared))
+            }
     
     */
     
@@ -361,22 +377,22 @@ async function fetchingData() {
     switch (dir) {
         case 'U':
             caja_caja = box_Address(padre.pos,padre.pos_Box,1,'U') && box_Address(padre.pos,padre.pos_Box,2,'U')
-            caja_pared = box_Address(padre.pos,padre.pos_Box,1,'U') && !wall_Address(maze,padre.pos,2,'U')                
+            caja_pared = box_Address(padre.pos,padre.pos_Box,1,'U') && wall_Address(maze,padre.pos,2,'U')                
 
             return padre.pos[0] > 0 && !wall_Address(maze,padre.pos,1,'U') && !caja_caja && !caja_pared;// && !saved_State(padre,visited_States);// && !caja_lost;
         case 'D':           
             caja_caja =  box_Address(padre.pos,padre.pos_Box,1,'D') && box_Address(padre.pos,padre.pos_Box,2,'D')
-            caja_pared = box_Address(padre.pos,padre.pos_Box,1,'D') && !wall_Address(maze,padre.pos,2,'D')
+            caja_pared = box_Address(padre.pos,padre.pos_Box,1,'D') && wall_Address(maze,padre.pos,2,'D')            
                            
             return padre.pos[0] < maze.length - 1 && !wall_Address(maze,padre.pos,1,'D') && !caja_caja && !caja_pared;// && !saved_State(padre,visited_States);// && !caja_lost;
         case 'L':              
             caja_caja =  box_Address(padre.pos,padre.pos_Box,1,'L') && box_Address(padre.pos,padre.pos_Box,2,'L')
-            caja_pared = box_Address(padre.pos,padre.pos_Box,1,'L') && !wall_Address(maze,padre.pos,2,'L')
+            caja_pared = box_Address(padre.pos,padre.pos_Box,1,'L') && wall_Address(maze,padre.pos,2,'L')
 
             return padre.pos[1] > 0 && !wall_Address(maze,padre.pos,1,'L') && !caja_caja && !caja_pared;// && !saved_State(padre,visited_States);// && !caja_lost;
         case 'R':               
             caja_caja =  box_Address(padre.pos,padre.pos_Box,1,'R') && box_Address(padre.pos,padre.pos_Box,2,'R')
-            caja_pared = box_Address(padre.pos,padre.pos_Box,1,'R') && !wall_Address(maze,padre.pos,2,'R')
+            caja_pared = box_Address(padre.pos,padre.pos_Box,1,'R') && wall_Address(maze,padre.pos,2,'R')
 
             return padre.pos[1] < maze[0].length && !wall_Address(maze,padre.pos,1,'R') && !caja_caja && !caja_pared;// && !saved_State(padre,visited_States);// && !caja_lost;
       }
@@ -420,7 +436,7 @@ async function fetchingData() {
                 arrBool[i] = true;
             }
         }
-        console.log(arrBool)
+        //console.log(arrBool)
         for(let i=0;i<array.length;i++){
             bool = bool && arrBool[i];
         }
