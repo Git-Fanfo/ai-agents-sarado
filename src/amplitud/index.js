@@ -140,10 +140,9 @@ async function fetchingData() {
         //&&  nodoEvaluado.level <= limite
         while (!testGoal(nodoEvaluado, problem)&&  nodoEvaluado.level <= limite) {
             //console.log('estados guardados:'+visited_States[0])
-            //console.log('evaluado?: '+saved_State(nodoEvaluado,visited_States))
-                    
-            //console.log(colors.brightGreen('expande '+nodoEvaluado.action))
-                  
+            //console.log('evaluado?: '+saved_State(nodoEvaluado,visited_States))                    
+            //console.log(colors.brightGreen('expande '+nodoEvaluado.action))                            
+            /*
             while(gameover(nodoEvaluado.pos_Box,maze) || saved_State(nodoEvaluado,visited_States)){
                 //console.log(colors.brightGreen('YAPERDISTE AAAAAAAAAAAAAAAAAAAAAAAAA'))
                             
@@ -159,17 +158,12 @@ async function fetchingData() {
                 expandidos.push([nodoEvaluado.level,nodoEvaluado.pos,nodoEvaluado.action])
                 nodos.shift();                              
             } 
-            /*
-            while(saved_State(nodoEvaluado)){
-                console.log(colors.brightGreen('YAPERDISTE AAAAAAAAAAAAAAAAAAAAAAAAA'))
-                nodoEvaluado = nodos[0];             
-                created.shift();
-                nodos.shift();                
-            } 
-            */           
-            
+            */                       
             created.shift();
-            agregarNodos(problem.maze,nodoEvaluado,nodos);
+
+            if(!gameover(nodoEvaluado.pos_Box,maze) && avoidRepeatedState(nodoEvaluado)){
+                agregarNodos(problem.maze,nodoEvaluado,nodos);
+            }           
 
             if(nodos.length == 0){
                 console.log(colors.brightRed('No se encontraron respuestas ome gonorrea ome'))
@@ -184,16 +178,12 @@ async function fetchingData() {
 
             nodos.shift();
             //created.shift();
-
             //console.log(colors.brightMagenta('Queue'))
             //console.log(created)
             if(nodoEvaluado.level>nivelActual){
                 nivelActual++
                 console.log(colors.brightMagenta('Nivel: '+nodoEvaluado.level))
             }
-            
-
-            
         }
 
         //console.log(expandidos);
@@ -253,6 +243,25 @@ async function fetchingData() {
                 created.push(dir);
             }//else console.log('No se puede crear: '+dir+' -> estado ya visitado')
         }//else console.log('No se puede crear: '+dir)
+    }
+
+    function avoidRepeatedState(node) {
+        if (node.level < 2) {
+            return true;
+        }
+        let nodePP = node.parent.parent;
+        if (!(nodePP.pos[0] == node.pos[0] && nodePP.pos[1] == node.pos[1])) {
+            return true;
+        }
+        for (let i = 0; i < node.pos_Box.length; i++) {
+            if (
+                nodePP.pos_Box[i][0] == node.pos_Box[i][0] &&
+                nodePP.pos_Box[i][1] == node.pos_Box[i][1]
+            ) {
+                return false;
+            }
+        }
+        return true;
     }
 
     function insertarArray (array,index,insertar){
