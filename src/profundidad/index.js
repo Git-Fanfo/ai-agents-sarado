@@ -252,79 +252,48 @@ async function fetchingData() {
      * @param {Array} nodos
      */
     function agregarNodos(maze, padre, nodos) {
-        let canMov = canMove(maze, padre, 'R');
-        if (canMov > 0) {
-            let row = padre.pos[0];
-            let column = padre.pos[1] + 1;
-            let pos_Box = padre.pos_Box;
-            // console.log('valorR : ', canMov);
-            if (canMov === 2) {
-                pos_Box = [];
-                for (let i = 0; i < padre.pos_Box.length; i++) {
-                    pos_Box.push(padre.pos_Box[i].slice());
+        let moves = ['R', 'L', 'D', 'U'];
+        for (let i = 0; i < moves.length; i++) {
+            let canMov = canMove(maze, padre, moves[i]);
+            if (canMov > 0) {
+                let row = padre.pos[0];
+                let column = padre.pos[1];
+                switch (moves[i]) {
+                    case 'U':
+                        row--;
+                        break;
+                    case 'D':
+                        row++;
+                        break;
+                    case 'L':
+                        column--;
+                        break;
+                    case 'R':
+                        column++;
+                        break;
+                    default:
+                        console.log("something's wrong with the switch");
+                        break;
                 }
-                moveBox(pos_Box, box2move, 'R');
-            }
-            nodos.unshift(
-                crearNodo([row, column], pos_Box, padre.level, padre, 'R')
-            );
-        }
-
-        canMov = canMove(maze, padre, 'L');
-        if (canMov > 0) {
-            let row = padre.pos[0];
-            let column = padre.pos[1] - 1;
-            let pos_Box = padre.pos_Box;
-            //console.log('valorL : ', canMov);
-            if (canMov === 2) {
-                pos_Box = [];
-                for (let i = 0; i < padre.pos_Box.length; i++) {
-                    pos_Box.push(padre.pos_Box[i].slice());
+                let pos_Box = padre.pos_Box;
+                // console.log(moves[i],' move : ', canMov);
+                if (canMov === 2) {
+                    pos_Box = [];
+                    for (let i = 0; i < padre.pos_Box.length; i++) {
+                        pos_Box.push(padre.pos_Box[i].slice());
+                    }
+                    moveBox(pos_Box, box2move, moves[i]);
                 }
-                moveBox(pos_Box, box2move, 'L');
+                nodos.unshift(
+                    crearNodo(
+                        [row, column],
+                        pos_Box,
+                        padre.level,
+                        padre,
+                        moves[i]
+                    )
+                );
             }
-
-            nodos.unshift(
-                crearNodo([row, column], pos_Box, padre.level, padre, 'L')
-            );
-        }
-
-        canMov = canMove(maze, padre, 'D');
-        if (canMov > 0) {
-            let row = padre.pos[0] + 1;
-            let column = padre.pos[1];
-            let pos_Box = padre.pos_Box;
-            //console.log('valorD : ', canMov);
-            if (canMov === 2) {
-                pos_Box = [];
-                for (let i = 0; i < padre.pos_Box.length; i++) {
-                    pos_Box.push(padre.pos_Box[i].slice());
-                }
-                moveBox(pos_Box, box2move, 'D');
-            }
-
-            nodos.unshift(
-                crearNodo([row, column], pos_Box, padre.level, padre, 'D')
-            );
-        }
-
-        canMov = canMove(maze, padre, 'U');
-        if (canMov > 0) {
-            let row = padre.pos[0] - 1;
-            let column = padre.pos[1];
-            let pos_Box = padre.pos_Box;
-            //console.log('valorU : ', canMov);
-            if (canMov === 2) {
-                pos_Box = [];
-                for (let i = 0; i < padre.pos_Box.length; i++) {
-                    pos_Box.push(padre.pos_Box[i].slice());
-                }
-                moveBox(pos_Box, box2move, 'U');
-            }
-
-            nodos.unshift(
-                crearNodo([row, column], pos_Box, padre.level, padre, 'U')
-            );
         }
     }
 
