@@ -107,6 +107,7 @@ async function fetchingData() {
     let problem = { maze, goal };
 
     var start = new Date().getTime();
+    console.log('Going deep...');
     console.log(solve(problem, root));
     var end = new Date().getTime();
     var time = (end - start) / 1000;
