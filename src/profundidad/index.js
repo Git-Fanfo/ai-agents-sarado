@@ -4,6 +4,7 @@ const { once } = require('events');
 const { createReadStream } = require('fs');
 const { createInterface } = require('readline');
 var box2move;
+var hash = [];
 async function processLineByLine() {
     const arrayInput = [];
     const level = [];
@@ -107,6 +108,7 @@ async function fetchingData() {
     let problem = { maze, goal };
 
     var start = new Date().getTime();
+    console.log('Going deep...');
     console.log(solve(problem, root));
     var end = new Date().getTime();
     var time = (end - start) / 1000;
@@ -135,22 +137,36 @@ async function fetchingData() {
         return bool;
     }
 
-    function avoidRepeatedState(node) {
-        if (node.level < 2) {
-            return true;
-        }
-        let nodePP = node.parent.parent;
-        if (!(nodePP.pos[0] == node.pos[0] && nodePP.pos[1] == node.pos[1])) {
-            return true;
-        }
+    function hashNodeToInt(node) {
+        let hashNum = 0;
+        hashNum += node.pos[0] + 10 * node.pos[1];
         for (let i = 0; i < node.pos_Box.length; i++) {
-            if (
-                nodePP.pos_Box[i][0] == node.pos_Box[i][0] &&
-                nodePP.pos_Box[i][1] == node.pos_Box[i][1]
-            ) {
-                return false;
+            hashNum +=
+                100 ** (i + 1) * (node.pos_Box[i][0] + 10 * node.pos_Box[i][1]);
+        }
+        return hashNum;
+    }
+
+    function isHashRepeated(node, hashNum) {
+        for (let i = 0; i < hash.length; i++) {
+            if (hashNum == hash[i][0]) {
+                if (node.level < hash[i][1]) {
+                    return false;
+                } else return true;
             }
         }
+        return false;
+    }
+
+    function avoidRepeatedState(node) {
+        hashNum = hashNodeToInt(node);
+        //console.log(hashNum);
+        //console.log(isHashRepeated(node, hashNum));
+        if (isHashRepeated(node, hashNum)) {
+            return false;
+        }
+        hash.unshift([hashNum, node.level]);
+        //console.log(hash);
         return true;
     }
 
@@ -188,7 +204,7 @@ async function fetchingData() {
             } */
             if (
                 // no sobre pase el límite de profundidad.
-                nodoEvaluado.level < 40 &&
+                nodoEvaluado.level < 64 &&
                 // evite acciones repetitivas.
                 avoidRepeatedState(nodoEvaluado)
             ) {
@@ -251,79 +267,48 @@ async function fetchingData() {
      * @param {Array} nodos
      */
     function agregarNodos(maze, padre, nodos) {
-        let canMov = canMove(maze, padre, 'R');
-        if (canMov > 0) {
-            let row = padre.pos[0];
-            let column = padre.pos[1] + 1;
-            let pos_Box = padre.pos_Box;
-            // console.log('valorR : ', canMov);
-            if (canMov === 2) {
-                pos_Box = [];
-                for (let i = 0; i < padre.pos_Box.length; i++) {
-                    pos_Box.push(padre.pos_Box[i].slice());
+        let moves = ['R', 'L', 'D', 'U'];
+        for (let i = 0; i < moves.length; i++) {
+            let canMov = canMove(maze, padre, moves[i]);
+            if (canMov > 0) {
+                let row = padre.pos[0];
+                let column = padre.pos[1];
+                switch (moves[i]) {
+                    case 'U':
+                        row--;
+                        break;
+                    case 'D':
+                        row++;
+                        break;
+                    case 'L':
+                        column--;
+                        break;
+                    case 'R':
+                        column++;
+                        break;
+                    default:
+                        console.log("something's wrong with the switch");
+                        break;
                 }
-                moveBox(pos_Box, box2move, 'R');
-            }
-            nodos.unshift(
-                crearNodo([row, column], pos_Box, padre.level, padre, 'R')
-            );
-        }
-
-        canMov = canMove(maze, padre, 'L');
-        if (canMov > 0) {
-            let row = padre.pos[0];
-            let column = padre.pos[1] - 1;
-            let pos_Box = padre.pos_Box;
-            //console.log('valorL : ', canMov);
-            if (canMov === 2) {
-                pos_Box = [];
-                for (let i = 0; i < padre.pos_Box.length; i++) {
-                    pos_Box.push(padre.pos_Box[i].slice());
+                let pos_Box = padre.pos_Box;
+                // console.log(moves[i],' move : ', canMov);
+                if (canMov === 2) {
+                    pos_Box = [];
+                    for (let i = 0; i < padre.pos_Box.length; i++) {
+                        pos_Box.push(padre.pos_Box[i].slice());
+                    }
+                    moveBox(pos_Box, box2move, moves[i]);
                 }
-                moveBox(pos_Box, box2move, 'L');
+                nodos.push(
+                    crearNodo(
+                        [row, column],
+                        pos_Box,
+                        padre.level,
+                        padre,
+                        moves[i]
+                    )
+                );
             }
-
-            nodos.unshift(
-                crearNodo([row, column], pos_Box, padre.level, padre, 'L')
-            );
-        }
-
-        canMov = canMove(maze, padre, 'D');
-        if (canMov > 0) {
-            let row = padre.pos[0] + 1;
-            let column = padre.pos[1];
-            let pos_Box = padre.pos_Box;
-            //console.log('valorD : ', canMov);
-            if (canMov === 2) {
-                pos_Box = [];
-                for (let i = 0; i < padre.pos_Box.length; i++) {
-                    pos_Box.push(padre.pos_Box[i].slice());
-                }
-                moveBox(pos_Box, box2move, 'D');
-            }
-
-            nodos.unshift(
-                crearNodo([row, column], pos_Box, padre.level, padre, 'D')
-            );
-        }
-
-        canMov = canMove(maze, padre, 'U');
-        if (canMov > 0) {
-            let row = padre.pos[0] - 1;
-            let column = padre.pos[1];
-            let pos_Box = padre.pos_Box;
-            //console.log('valorU : ', canMov);
-            if (canMov === 2) {
-                pos_Box = [];
-                for (let i = 0; i < padre.pos_Box.length; i++) {
-                    pos_Box.push(padre.pos_Box[i].slice());
-                }
-                moveBox(pos_Box, box2move, 'U');
-            }
-
-            nodos.unshift(
-                crearNodo([row, column], pos_Box, padre.level, padre, 'U')
-            );
         }
     }
 
