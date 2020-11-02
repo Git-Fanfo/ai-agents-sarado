@@ -168,23 +168,6 @@ async function fetchingData() {
         hash.unshift([hashNum, node.level]);
         //console.log(hash);
         return true;
-
-        /* if (node.level < 2) {
-            return true;
-        }
-        let nodePP = node.parent.parent;
-        if (!(nodePP.pos[0] == node.pos[0] && nodePP.pos[1] == node.pos[1])) {
-            return true;
-        }
-        for (let i = 0; i < node.pos_Box.length; i++) {
-            if (
-                nodePP.pos_Box[i][0] == node.pos_Box[i][0] &&
-                nodePP.pos_Box[i][1] == node.pos_Box[i][1]
-            ) {
-                return false;
-            }
-        }
-        return true; */
     }
 
     function solve(problem, nodo) {
@@ -221,7 +204,7 @@ async function fetchingData() {
             } */
             if (
                 // no sobre pase el límite de profundidad.
-                nodoEvaluado.level < 34 &&
+                nodoEvaluado.level < 64 &&
                 // evite acciones repetitivas.
                 avoidRepeatedState(nodoEvaluado)
             ) {
@@ -316,7 +299,7 @@ async function fetchingData() {
                     }
                     moveBox(pos_Box, box2move, moves[i]);
                 }
-                nodos.unshift(
+                nodos.push(
                     crearNodo(
                         [row, column],
                         pos_Box,
