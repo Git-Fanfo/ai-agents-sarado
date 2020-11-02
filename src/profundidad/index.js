@@ -4,6 +4,7 @@ const { once } = require('events');
 const { createReadStream } = require('fs');
 const { createInterface } = require('readline');
 var box2move;
+var hash = [];
 async function processLineByLine() {
     const arrayInput = [];
     const level = [];
@@ -136,8 +137,39 @@ async function fetchingData() {
         return bool;
     }
 
+    function hashNodeToInt(node) {
+        let hashNum = 0;
+        hashNum += node.pos[0] + 10 * node.pos[1];
+        for (let i = 0; i < node.pos_Box.length; i++) {
+            hashNum +=
+                100 ** (i + 1) * (node.pos_Box[i][0] + 10 * node.pos_Box[i][1]);
+        }
+        return hashNum;
+    }
+
+    function isHashRepeated(node, hashNum) {
+        for (let i = 0; i < hash.length; i++) {
+            if (hashNum == hash[i][0]) {
+                if (node.level < hash[i][1]) {
+                    return false;
+                } else return true;
+            }
+        }
+        return false;
+    }
+
     function avoidRepeatedState(node) {
-        if (node.level < 2) {
+        hashNum = hashNodeToInt(node);
+        //console.log(hashNum);
+        //console.log(isHashRepeated(node, hashNum));
+        if (isHashRepeated(node, hashNum)) {
+            return false;
+        }
+        hash.unshift([hashNum, node.level]);
+        //console.log(hash);
+        return true;
+
+        /* if (node.level < 2) {
             return true;
         }
         let nodePP = node.parent.parent;
@@ -152,7 +184,7 @@ async function fetchingData() {
                 return false;
             }
         }
-        return true;
+        return true; */
     }
 
     function solve(problem, nodo) {
@@ -189,7 +221,7 @@ async function fetchingData() {
             } */
             if (
                 // no sobre pase el límite de profundidad.
-                nodoEvaluado.level < 40 &&
+                nodoEvaluado.level < 34 &&
                 // evite acciones repetitivas.
                 avoidRepeatedState(nodoEvaluado)
             ) {
