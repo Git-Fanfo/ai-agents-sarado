@@ -47,11 +47,12 @@ console.log(colors.brightCyan(nodos))
 nodos.push(boxes)
 console.log(colors.brightCyan(nodos))
 let listaCajas = boxes
-listaCajas = [[0,0],[1,2]]
-//listaCajas[0] = [0,0]
+//listaCajas = [[0,0],[1,2]]
+listaCajas[0] = [0,0]
+console.log(colors.brightCyan('boxes: '+boxes))
 nodos.push(listaCajas)
 console.log(colors.brightCyan(nodos))
-console.log(colors.brightGreen(insertarArray([1,2,5,4],9,3)))
+//console.log(colors.brightGreen(insertarArray([1,2,5,4],9,3)))
 
 
 function insertarArray (array,index,insertar){
