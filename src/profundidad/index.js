@@ -299,7 +299,7 @@ async function fetchingData() {
                     }
                     moveBox(pos_Box, box2move, moves[i]);
                 }
-                nodos.push(
+                nodos.unshift(
                     crearNodo(
                         [row, column],
                         pos_Box,
