@@ -108,7 +108,7 @@ async function fetchingData() {
     let problem = { maze, goal };
 
     var start = new Date().getTime();
-    console.log('Going deep...');
+    console.log('Going wide...');
     console.log(solve(problem, root));
     var end = new Date().getTime();
     var time = (end - start) / 1000;
@@ -168,7 +168,7 @@ async function fetchingData() {
         if (hash.includes(hashNum)) {
             return false;
         }
-        hash.unshift(hashNum);
+        hash.push(hashNum);
         //console.log(hash);
         return true;
     }
@@ -270,7 +270,7 @@ async function fetchingData() {
      * @param {Array} nodos
      */
     function agregarNodos(maze, padre, nodos) {
-        let moves = ['R', 'L', 'D', 'U'];
+        let moves = ['U', 'D', 'L', 'R'];
         for (let i = 0; i < moves.length; i++) {
             let canMov = canMove(maze, padre, moves[i]);
             if (canMov > 0) {

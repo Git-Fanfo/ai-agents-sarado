@@ -108,7 +108,7 @@ async function fetchingData() {
     let problem = { maze, goal };
 
     var start = new Date().getTime();
-    console.log('Going deep...');
+    console.log('Going deep but wide...');
     console.log(solve(problem, root));
     var end = new Date().getTime();
     var time = (end - start) / 1000;
@@ -170,21 +170,18 @@ async function fetchingData() {
         return true;
     }
 
-
     function solve(problem, nodo) {
-
         let solution = [];
-            //let cost = 0;
-            let nodos = [];
-            let nodoEvaluado = nodo;
+        //let cost = 0;
+        let nodos = [];
+        let nodoEvaluado = nodo;
 
-        for(let limite = 1;limite<=64;limite++){
+        for (let limite = 1; limite <= 64; limite++) {
             solution = [];
             //let cost = 0;
             nodos = [];
             nodoEvaluado = nodo;
-            hash = []
-            
+            hash = [];
 
             while (!testGoal(nodoEvaluado, problem)) {
                 if (
@@ -196,23 +193,23 @@ async function fetchingData() {
                     agregarNodos(problem.maze, nodoEvaluado, nodos);
                 }
                 if (nodos[0] == null) {
-                    solution = 'No hay solución en el limite: '+limite;
+                    solution = 'No hay solución en el limite: ' + limite;
                     level = nodoEvaluado.level;
-                    break
+                    break;
                     return { solution, level };
                 }
                 nodoEvaluado = nodos.shift();
                 //console.log(nodoEvaluado);
-            }      
-            
-            if(testGoal(nodoEvaluado, problem)){
+            }
+
+            if (testGoal(nodoEvaluado, problem)) {
                 level = nodoEvaluado.level;
                 trazarRuta(nodoEvaluado, solution);
-                console.log(colors.brightRed('Encontre una solucion'))
+                console.log(colors.brightRed('Encontre una solucion'));
                 return { solution, level };
             }
             //console.log(colors.brightMagenta('Voy a evaluar el for de nuevo por '+limite+' vez'))
-        }        
+        }
     }
 
     function moveBox(Boxes, box2move, side) {
