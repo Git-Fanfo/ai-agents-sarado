@@ -147,24 +147,9 @@ async function fetchingData() {
         return hashNum;
     }
 
-    /*
-    
-    */
-    function isHashRepeated(node, hashNum) {
-        for (let i = 0; i < hash.length; i++) {
-            if (hashNum == hash[i][0]) {
-                if (node.level < hash[i][1]) {
-                    return false;
-                } else return true;
-            }
-        }
-        return false;
-    }
-
     function avoidRepeatedState(node) {
         hashNum = hashNodeToInt(node);
         //console.log(hashNum);
-        //console.log(isHashRepeated(node, hashNum));
         if (hash.includes(hashNum)) {
             return false;
         }
