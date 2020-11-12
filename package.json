@@ -1,7 +1,7 @@
 {
     "name": "ai-agents-sarado",
     "version": "1.0.0",
-    "description": "",
+    "description": "Sokoban auto-resolver.",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -16,8 +16,22 @@
         "type": "git",
         "url": "git+https://github.com/Git-Fanfo/ai-agents-sarado.git"
     },
-    "author": "",
-    "license": "ISC",
+    "author": "andcastillo",
+    "contributors": [
+        {
+            "name": "Alejandro Caicedo - learningalone"
+        },
+        {
+            "name": "Juan José Dorado - Git-Fanfo"
+        },
+        {
+            "name": "Nicolás Jaramillo - kiinTheDovah"
+        },
+        {
+            "name": "Sara Maradiago - SJMC29"
+        }
+    ],
+    "license": "MIT",
     "bugs": {
         "url": "https://github.com/Git-Fanfo/ai-agents-sarado/issues"
     },
