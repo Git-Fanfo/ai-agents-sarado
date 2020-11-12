@@ -2,7 +2,7 @@
 if [ $# -le 0 ]; then
     echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <directorio del nivel>"
     echo "Ejemplo: ${0} 1 Niveles/nivel1.txt"
-    exit -1
+    exit -1;
 fi
 AMPLITUD="dist/amplitud.js"
 PROFUNDIDAD="dist/profundidad.js"
@@ -11,7 +11,7 @@ if [ $# -eq 1 ]; then
     ARCHIVO="${1}"
     if [ ! -f "${ARCHIVO}" ]; then
         echo "El directorio ${ARCHIVO} no se encontro"
-        exit -1
+        exit -1;
     fi
     echo "Ejecutar con"
     echo "1 => amplitud."
@@ -35,7 +35,7 @@ if [ $# -eq 1 ]; then
     fi
     echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <ruta del nivel>"
     echo "Ejemplo: ${0} 1 Niveles/nivel1.txt"
-    exit -1
+    exit -1;
 
 fi
 
@@ -46,7 +46,7 @@ if [ ! -f "${ARCHIVO}" ]; then
     echo "El directorio ${ARCHIVO} no se encontro"
     echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <ruta del nivel>"
     echo "Ejemplo: ${0} 1 Niveles/nivel1.txt"
-    exit -1
+    exit -1;
 fi
 
 if [ ${METODO} == '1' ]; then
@@ -66,4 +66,4 @@ fi
 
 echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <ruta del nivel>"
 echo "Ejemplo: ${0} 1 Niveles/nivel1.txt"
-exit -1
+exit -1;
