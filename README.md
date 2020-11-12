@@ -1,41 +1,28 @@
-# ai-agents
+# SOKOBAN
 
-First attemp to create a multi agent framework for the lecture: Introducción a la inteligencia Artificial. 
+Sokoban auto-resolver.
+Requires a maze in a text file. See Niveles/ for examples
 
-## Install
+## Installing and trying
 
-``` bash
-git clone https://github.com/andcastillo/ai-agents.git
-cd ai-agents
-npm install 
-```
+### Installing
 
-## Run the example
+git clone https://github.com/Git-Fanfo/ai-agents-sarado
+cd ai-agents-sarado
+npm i
 
-node src/example/main.js
+### Trying
 
-## Output
+there are 3 algorithms, amplitud, profundidad and profundidad iterativa.
 
-```
-Winner Smith
-[ { agentID: 'Smith', action: 'DOWN' },
-  { agentID: 'Smith', action: 'RIGHT' },
-  { agentID: 'Smith', action: 'RIGHT' },
-  { agentID: 'Smith', action: 'LEFT' },
-  { agentID: 'Smith', action: 'RIGHT' },
-  { agentID: 'Smith', action: 'LEFT' },
-  { agentID: 'Smith', action: 'RIGHT' },
-  { agentID: 'Smith', action: 'LEFT' },
-  { agentID: 'Smith', action: 'RIGHT' },
-  { agentID: 'Smith', action: 'LEFT' },
-  { agentID: 'Smith', action: 'RIGHT' },
-  { agentID: 'Smith', action: 'LEFT' } ]
-[ [ 0, 0, 0, 0 ],
-  [ 0, 1, 1, -1 ],
-  [ 0, 1, 0, 0 ],
-  [ 0, 'X', 0, 1 ] ]
-```
-  
-  As we still having the -1 in the problem matrix, we assume that agent could not solve the given problem.
-  
-  Now, try it yoursel!!!!
+example for trying:
+node src/amplitud/index.js Niveles/nivel1.txt
+
+## Building
+
+npm i
+npm run build
+
+## Run levels
+
+node dist/ src/example/main.js
