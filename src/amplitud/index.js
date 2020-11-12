@@ -24,7 +24,7 @@ async function processLineByLine() {
             console.log(colors.brightMagenta('Loading data...\n'));
             //Crear el maze
             for (
-                var i = 0;
+                let i = 0;
                 i < arrayInput.length && arrayInput[i].indexOf(',') == -1;
                 i = 0
             ) {
@@ -33,7 +33,7 @@ async function processLineByLine() {
             }
 
             //Crear las posiciones
-            for (var i = 0; i < arrayInput.length; i++) {
+            for (let i = 0; i < arrayInput.length; i++) {
                 if (arrayInput[i] != []) {
                     positions.push(
                         arrayOfArrays(i).map(function (x) {
@@ -44,8 +44,8 @@ async function processLineByLine() {
             }
 
             function arrayOfArrays(i) {
-                place = [];
-                for (var j = 0; j < arrayInput[i].length; j++) {
+                let place = [];
+                for (let j = 0; j < arrayInput[i].length; j++) {
                     if (arrayInput[i][j] != ',') {
                         place.push(arrayInput[i][j]);
                     }
@@ -148,7 +148,7 @@ async function fetchingData() {
     }
 
     function avoidRepeatedState(node) {
-        hashNum = hashNodeToInt(node);
+        let hashNum = hashNodeToInt(node);
         //console.log(hashNum);
         if (hash.includes(hashNum)) {
             return false;
@@ -160,7 +160,7 @@ async function fetchingData() {
 
     function solve(problem, nodo) {
         let solution = [];
-        //let cost = 0;
+        let level;
         let nodos = [];
         let nodoEvaluado = nodo;
         while (!testGoal(nodoEvaluado, problem)) {
