@@ -1,0 +1,25 @@
+{
+    "name": "ai-agents-sarado",
+    "version": "1.0.0",
+    "description": "First attemp to create a multi agent framework for the lecture: Introducción a la inteligencia Artificial.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Git-Fanfo/ai-agents-sarado.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Git-Fanfo/ai-agents-sarado/issues"
+    },
+    "homepage": "https://github.com/Git-Fanfo/ai-agents-sarado#readme",
+    "dependencies": {
+        "colors": "^1.4.0",
+        "events": "^3.2.0",
+        "fs": "0.0.1-security",
+        "readline": "^1.3.0",
+    }
+}
