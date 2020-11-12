@@ -365,19 +365,6 @@ async function fetchingData() {
         return false;
     }
 
-    function sacarMinimo(nodos) {
-        let min = { cost: 999999 };
-        let index = null;
-        for (let i = 0; i < nodos.length; i++) {
-            if (nodos[i].cost < min.cost) {
-                min = nodos[i];
-                index = i;
-            }
-        }
-        nodos.splice(index, 1);
-        return min;
-    }
-
     function canMove(maze, padre, side) {
         if (isBoxAtSide(padre, side, 0)) {
             if (isWallAtSide(maze, padre, side, 1)) {

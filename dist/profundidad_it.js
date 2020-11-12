@@ -1,8 +1,8 @@
 /**
- * ai-agents-sarado
+ * ai-agents-sarado - Sokoban auto-resolver.
  * @version v1.0.0
  * @link https://github.com/Git-Fanfo/ai-agents-sarado#readme
- * @license ISC
+ * @license MIT
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('util'), require('os'), require('events'), require('fs'), require('readline')) :
