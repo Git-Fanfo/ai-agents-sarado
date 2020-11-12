@@ -64,7 +64,6 @@ async function processLineByLine() {
                 )
             );
         } finally {
-            //console.log(level)
             return [level, positions];
         }
     } catch (err) {
@@ -115,7 +114,6 @@ async function fetchingData() {
     console.log('time: ', time, 's');
 
     function testGoal(node, problem) {
-        //console.log(problem);
         let aux = node.pos_Box;
         aux = aux.map(function (x) {
             return compare(x, problem);
@@ -175,7 +173,6 @@ async function fetchingData() {
 
         for (let limite = 1; limite <= 64; limite++) {
             solution = [];
-            //let cost = 0;
             nodos = [];
             nodoEvaluado = nodo;
             hash = [];
@@ -205,12 +202,10 @@ async function fetchingData() {
                 console.log(colors.brightRed('Encontre una solucion'));
                 return { solution, level };
             }
-            //console.log(colors.brightMagenta('Voy a evaluar el for de nuevo por '+limite+' vez'))
         }
     }
 
     function moveBox(Boxes, box2move, side) {
-        //console.log('boxes: ', Boxes);
         switch (side) {
             case 'U':
                 Boxes[box2move][0]--;
@@ -229,7 +224,6 @@ async function fetchingData() {
                 console.log("something's wrong with moveBox");
                 break;
         }
-        //console.log('boxes after move: ', Boxes);
     }
 
     function crearNodo(pos, pos_Box, level, parent, action) {
@@ -275,7 +269,6 @@ async function fetchingData() {
                         break;
                 }
                 let pos_Box = padre.pos_Box;
-                // console.log(moves[i],' move : ', canMov);
                 if (canMov === 2) {
                     pos_Box = [];
                     for (let i = 0; i < padre.pos_Box.length; i++) {
@@ -307,7 +300,6 @@ async function fetchingData() {
     }
 
     function isBoxAtSide(padre, side, plusOne) {
-        //complete
         let paPos = {
             y: padre.pos[0],
             x: padre.pos[1],
@@ -341,7 +333,6 @@ async function fetchingData() {
     }
 
     function isWallAtSide(maze, padre, side, plusOne) {
-        //completed
         let paPos = {
             y: padre.pos[0],
             x: padre.pos[1],
@@ -408,9 +399,7 @@ async function fetchingData() {
             posPath.push('[' + nodo.pos + ']');
             nodo = nodo.parent;
         }
-        //console.log("PosPath: " +"["+posPath+"]");
     }
-    //console.log(solve(problem, root));
 }
 
 fetchingData();
@@ -426,15 +415,3 @@ function setGoal(maze) {
     }
     return goal;
 }
-/*
-for(var i = 0;array[i].chartAt[1] || array[i].chartAt[1] != ',';i++){
-    console.log(array[i]);
-}
-*/
-
-//process.argv.forEach(function (val, index, array) {
-//    console.log(index + ': ' + val);
-//  });
-
-//console.log('\nola estoy aqui para explicar');
-//console.log(process.argv[2]);

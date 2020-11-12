@@ -829,7 +829,6 @@
 	    } catch (err) {
 	      console.log(lib.brightRed('An error has ocurred loading the data: ' + err + ' \nCheck your input\n'));
 	    } finally {
-	      //console.log(level)
 	      return [level, positions];
 	    }
 	  } catch (err) {
@@ -875,7 +874,6 @@
 	  console.log('time: ', time, 's');
 
 	  function testGoal(node, problem) {
-	    //console.log(problem);
 	    let aux = node.pos_Box;
 	    aux = aux.map(function (x) {
 	      return compare(x, problem);
@@ -909,14 +907,13 @@
 	  }
 
 	  function avoidRepeatedState(node) {
-	    let hashNum = hashNodeToInt(node); //console.log(hashNum);
+	    let hashNum = hashNodeToInt(node);
 
 	    if (hash.includes(hashNum)) {
 	      return false;
 	    }
 
-	    hash.push(hashNum); //console.log(hash);
-
+	    hash.push(hashNum);
 	    return true;
 	  }
 
@@ -927,32 +924,6 @@
 	    let nodoEvaluado = nodo;
 
 	    while (!testGoal(nodoEvaluado, problem)) {
-	      /* console.log('\n\nnodo: ', nodoEvaluado.pos);
-	      console.log(
-	          'parent-action: ',
-	          nodoEvaluado.parent == null ? null : nodoEvaluado.parent.action
-	      );
-	      console.log('action: ', nodoEvaluado.action);
-	      console.log('level: ', nodoEvaluado.level, '\n');
-	      if (nodoEvaluado.level > 1) {
-	          console.log(
-	              'parent pos: ',
-	              nodoEvaluado.parent.parent.pos,
-	              '\npos:        ',
-	              nodoEvaluado.pos,
-	              '\nparent posBox: ',
-	              nodoEvaluado.parent.parent.pos_Box,
-	              '\nposBox:        ',
-	              nodoEvaluado.pos_Box
-	          );
-	          if (
-	              nodoEvaluado.level > 1 &&
-	              nodoEvaluado.parent.parent.pos[0] == nodoEvaluado.pos[0] &&
-	              nodoEvaluado.parent.parent.pos[1] == nodoEvaluado.pos[1]
-	          ) {
-	              console.log('pos=parentPos');
-	          }
-	      } */
 	      if ( // no sobre pase el límite de profundidad.
 	      nodoEvaluado.level < 64 && // evite acciones repetitivas.
 	      avoidRepeatedState(nodoEvaluado)) {
@@ -968,7 +939,7 @@
 	        };
 	      }
 
-	      nodoEvaluado = nodos.shift(); //console.log(nodoEvaluado);
+	      nodoEvaluado = nodos.shift();
 	    }
 
 	    level = nodoEvaluado.level;
@@ -980,7 +951,6 @@
 	  }
 
 	  function moveBox(Boxes, box2move, side) {
-	    //console.log('boxes: ', Boxes);
 	    switch (side) {
 	      case 'U':
 	        Boxes[box2move][0]--;
@@ -1001,8 +971,7 @@
 	      default:
 	        console.log("something's wrong with moveBox");
 	        break;
-	    } //console.log('boxes after move: ', Boxes);
-
+	    }
 	  }
 
 	  function crearNodo(pos, pos_Box, level, parent, action) {
@@ -1056,7 +1025,7 @@
 	            break;
 	        }
 
-	        let pos_Box = padre.pos_Box; // console.log(moves[i],' move : ', canMov);
+	        let pos_Box = padre.pos_Box;
 
 	        if (canMov === 2) {
 	          pos_Box = [];
@@ -1085,7 +1054,6 @@
 	  }
 
 	  function isBoxAtSide(padre, side, plusOne) {
-	    //complete
 	    let paPos = {
 	      y: padre.pos[0],
 	      x: padre.pos[1]
@@ -1129,7 +1097,6 @@
 	  }
 
 	  function isWallAtSide(maze, padre, side, plusOne) {
-	    //completed
 	    let paPos = {
 	      y: padre.pos[0],
 	      x: padre.pos[1]
@@ -1185,17 +1152,14 @@
 	  }
 
 	  function trazarRuta(nodo, array) {
-	    //let index = nodo;
 	    let posPath = []; // Crea el Array recorriendo los padres desde la hoja en la posicion 0 del Array tree
 
 	    while (nodo.parent != null) {
 	      array.unshift(nodo.action);
 	      posPath.push('[' + nodo.pos + ']');
 	      nodo = nodo.parent;
-	    } //console.log("PosPath: " +"["+posPath+"]");
-
-	  } //console.log(solve(problem, root));
-
+	    }
+	  }
 	}
 
 	fetchingData();
@@ -1213,17 +1177,6 @@
 
 	  return goal;
 	}
-	/*
-	for(var i = 0;array[i].chartAt[1] || array[i].chartAt[1] != ',';i++){
-	    console.log(array[i]);
-	}
-	*/
-	//process.argv.forEach(function (val, index, array) {
-	//    console.log(index + ': ' + val);
-	//  });
-	//console.log('\nola estoy aqui para explicar');
-	//console.log(process.argv[2]);
-
 
 	var amplitud = {};
 
