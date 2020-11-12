@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 if [ $# -le 0 ]; then
-    echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <directorio del nivelx>"
+    echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <directorio del nivel>"
+    echo "Ejemplo: ${0} 1 Niveles/nivel1.txt"
     exit -1
 fi
 AMPLITUD="dist/amplitud.js"
@@ -32,7 +33,9 @@ if [ $# -eq 1 ]; then
         node ${PROF_IT} ${ARCHIVO}
         exit 0;
     fi
-    echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <ruta del nivelx>"
+    echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <ruta del nivel>"
+    echo "Ejemplo: ${0} 1 Niveles/nivel1.txt"
+    exit -1
 
 fi
 
@@ -41,6 +44,8 @@ ARCHIVO="${2}"
 
 if [ ! -f "${ARCHIVO}" ]; then
     echo "El directorio ${ARCHIVO} no se encontro"
+    echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <ruta del nivel>"
+    echo "Ejemplo: ${0} 1 Niveles/nivel1.txt"
     exit -1
 fi
 
@@ -59,19 +64,6 @@ if [ ${METODO} == '3' ]; then
     exit 0;
 fi
 
-echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <ruta del nivelx>"
-
-
-# if [ ! -f "${ARCHIVO}" ]; then 
-#     echo "El archivo ${ARCHIVO} no se encontro"
-#     exit -1
-# fi
-# if [ ! -d "${DIRECTORIO}" ]; then
-#     echo "El directorio ${DIRECTORIO} no se encontro"
-#     exit -1
-# fi
-# echo -n "Digite el nivel "
-# read LEVEL
-# echo ${LEVEL}
-# ${EXE} ${ARCHIVO} ${DIRECTORIO} ${LEVEL}
-# cat ${DIRECTORIO}/nivel${LEVEL}
+echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <ruta del nivel>"
+echo "Ejemplo: ${0} 1 Niveles/nivel1.txt"
+exit -1
