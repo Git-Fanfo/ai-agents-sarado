@@ -111,7 +111,7 @@ class AgentController {
     this.world = null;
     this.actions = [];
     this.data = {
-      states: [],
+      states: {},
       world: {}
     };
   }
@@ -448,7 +448,7 @@ class Agent {
 
 
   send() {
-    return table["deafult"];
+    return this.table["deafult"];
   }
   /**
    * Return the agent id
