@@ -120,7 +120,7 @@ async function fetchingData() {
     console.log(solve(problem, root));
     var end = new Date().getTime();
     var time = (end - start) / 1000;
-    console.log('time: ', time, 's');
+    //console.log('time: ', time, 's');
 
     /**
     * Funcion que retorna true si esta en el nodo ganador y false de lo contrario
