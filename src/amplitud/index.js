@@ -6,7 +6,7 @@ const { createInterface } = require('readline');
 var box2move;
 var hash = [];
 /**
- * Recibimos los datos desde la linea de comandos y los retornamos
+ * Los datos son leidos desde la linea de comandos y se retornan en un array 
  * 
 */
 async function processLineByLine() {
@@ -60,7 +60,7 @@ async function processLineByLine() {
                 colors.brightCyan('Data has been loaded succesfully\n')
             ); */
         } catch (err) {
-            /*
+            
                 console.log(
                 colors.brightRed(
                     'An error has ocurred loading the data: ' +
@@ -68,9 +68,8 @@ async function processLineByLine() {
                         ' \nCheck your input\n'
                 )
             );            
-            */
-            
         } finally {
+            // Este es el return del array level y el array posiciones.
             return [level, positions];
         }
     } catch (err) {
@@ -79,7 +78,8 @@ async function processLineByLine() {
 }
 
 /**
- * Obtenemos la data y con ella operamos
+ * Una vez leida la informacion, se asigna a unas variables para operarlas con mayor facilidad.
+ * Esta es la funcion que abarca todo.
  * 
 */
 async function fetchingData() {
@@ -104,7 +104,7 @@ async function fetchingData() {
     //console.log(colors.brightRed('Goal:'));
     //console.log(goal);
 
-    //Creamos la raiz del arbol
+    //Representacion de el nodo raiz de nuestro arbol, a partir del cual se crearan los demas nodos.
     let root = {
         pos: player,
         pos_Box: boxes,
@@ -124,10 +124,9 @@ async function fetchingData() {
 
     /**
     * Funcion que retorna true si esta en el nodo ganador y false de lo contrario
-    * @param {Object} node 
-    * @param {Array2D} problem 
+    * @param {object} node 
+    * @param {array} problem 
     */
-
     function testGoal(node, problem) {
         let aux = node.pos_Box;
         aux = aux.map(function (x) {
@@ -137,9 +136,9 @@ async function fetchingData() {
     }
 
     /**
-    * Function que compara la posicion de una caja con el tablero y retorna un booleano
-    * @param {Object} node 
-    * @param {Array2D} problem 
+    * Funcion que compara la posicion de una caja con el tablero y retorna un booleano
+    * @param {object} node 
+    * @param {array} problem 
     */
     function compare(node, problem) {
         let psx = node[0];
@@ -156,8 +155,8 @@ async function fetchingData() {
     }
 
     /**
-    * Funcion que convierte un nodo en un identificador de tipo numerico que sera usado para el hash
-    * @param {Object} node 
+    * Retorna un numero identificador unico para cada nodo enviado.
+    * @param {object} node 
     */
     function hashNodeToInt(node) {
         let hashNum = 0;
@@ -170,9 +169,9 @@ async function fetchingData() {
     }
 
     /**
-     *Funcion que evita estados repetidos, revisando si los tiene guardados en el array hash, retornando false si ya existe
-     * y true si no existe
-     * @param {Object} node 
+     * Retorna un booleano true en caso de que el estado no se encuentre en un array hash, en caso que ya exista, 
+     * retorna false.
+     * @param {object} node 
      */
     function avoidRepeatedState(node) {
         let hashNum = hashNodeToInt(node);
@@ -184,9 +183,9 @@ async function fetchingData() {
     }
 
     /**
-    * Funcion para crear y resolver el arbol de busqueda
-    * @param {Array2D} problem 
-    * @param {Object} nodo 
+    * Inicia la creacion y busqueda del arbol por amplitud.
+    * @param {array} problem 
+    * @param {object} nodo 
     */
     function solve(problem, nodo) {
         let solution = [];
@@ -206,7 +205,6 @@ async function fetchingData() {
                 solution = 'No hay solución';
                 level = nodoEvaluado.level;
                 return { solution, level };
-                break;
             }
             nodoEvaluado = nodos.shift();
         }
@@ -218,8 +216,8 @@ async function fetchingData() {
 
    /**
     * Funcion que mueve una caja del array de cajas en la direccion indicada
-    * @param {Array2D} Boxes 
-    * @param {Array} box2move 
+    * @param {array} Boxes 
+    * @param {array} box2move 
     * @param {string} side 
     */
     function moveBox(Boxes, box2move, side) {
@@ -244,12 +242,12 @@ async function fetchingData() {
     }
 
     /**
-     * Function para crear un nodo
-     * @param {Array} pos 
-     * @param {Array} pos_Box 
-     * @param {Int} level 
-     * @param {Object} parent 
-     * @param {String} action 
+     * Funcion para crear un nodo con la representacion del nodo raiz.
+     * @param {object} pos 
+     * @param {array} pos_Box 
+     * @param {number} level 
+     * @param {object} parent 
+     * @param {string} action 
      */
     function crearNodo(pos, pos_Box, level, parent, action) {
         let node = {
@@ -263,11 +261,11 @@ async function fetchingData() {
     }
 
     /**
-     * Se encarga de añadir los posibles caminos a seguir para una posicion en maze. En este caso toma
-     * la primera posicion, pues es la de menor costo segun nuestro BubbleSort.
-     * @param {Array} maze
-     * @param {Object} padre
-     * @param {Array} nodos
+     * Crea los nuevos nodos segun un padre dado, debe de cumplir con la funcion canMove y segun su direccion,
+     * se hara un push a nodos en la misma.
+     * @param {array} maze
+     * @param {object} padre
+     * @param {array} nodos
      */
     function agregarNodos(maze, padre, nodos) {
         let moves = ['U', 'D', 'L', 'R'];
@@ -315,10 +313,10 @@ async function fetchingData() {
     }
 
     /**
-     * Funcion que retorna true si existe una caja en el array con la posicion enviada.
-     * @param {Int} paPosY 
-     * @param {Int} paPosX 
-     * @param {Array} pos_Box 
+     * Retorna true en caso de que exista una caja en la posicion dada.
+     * @param {number} paPosY 
+     * @param {number} paPosX 
+     * @param {array} pos_Box 
      */
     function compareBox(paPosY, paPosX, pos_Box) {
         for (let i = 0; i < pos_Box.length; i++) {
@@ -332,9 +330,9 @@ async function fetchingData() {
 
     /**
      * Comprueba si existe una caja al lado de una posicion en la direccion dada
-     * @param {Object} padre 
+     * @param {object} padre 
      * @param {string} side 
-     * @param {Int} plusOne 
+     * @param {number} plusOne 
      */
     function isBoxAtSide(padre, side, plusOne) {
         let paPos = {
@@ -370,11 +368,12 @@ async function fetchingData() {
     }
 
     /**
-     * Comprueba si existe una pared al lado de una posicion en la direccion dada
-     * @param {Array2D} maze 
-     * @param {Object} padre 
+     * Comprueba si existe una pared al lado de una posicion en la direccion dada, retornando true en caso de que si
+     * y falso en caso de que no.
+     * @param {array} maze 
+     * @param {object} padre 
      * @param {string} side 
-     * @param {int} plusOne 
+     * @param {number} plusOne 
      */
     function isWallAtSide(maze, padre, side, plusOne) {
         let paPos = {
@@ -410,9 +409,9 @@ async function fetchingData() {
     }
 
     /**
-     * aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-     * @param {Array2D} maze 
-     * @param {Object} padre 
+     * Retorna 0 en caso de que pueda moverse, 1 en caso de que no y 2 en caso de que pueda moverse y haya una caja
+     * @param {array} maze 
+     * @param {object} padre 
      * @param {string} side 
      */
     function canMove(maze, padre, side) {
@@ -429,8 +428,8 @@ async function fetchingData() {
 
     /**
      * Crea el camino desde el nodo hijo hasta su padre y lo asigna al array dado.
-     * @param {Object} nodo 
-     * @param {Array} array 
+     * @param {object} nodo 
+     * @param {array} array 
      */
     function trazarRuta(nodo, array) {
         let posPath = [];
@@ -447,7 +446,7 @@ fetchingData();
 
 /**
  * Define el objetivo, donde hayan posiciones en X añade un array a goal.
- * @param {Array2D} maze 
+ * @param {array} maze 
  */
 function setGoal(maze) {
     let goal = [];
