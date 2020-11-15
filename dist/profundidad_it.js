@@ -998,10 +998,7 @@
 	        if (nodos[0] == null) {
 	          solution = 'No hay solución en el limite: ' + limite;
 	          level = nodoEvaluado.level;
-	          return {
-	            solution,
-	            level
-	          };
+	          break;
 	        }
 
 	        nodoEvaluado = nodos.shift();
@@ -1009,8 +1006,8 @@
 
 	      if (testGoal(nodoEvaluado, problem)) {
 	        level = nodoEvaluado.level;
-	        trazarRuta(nodoEvaluado, solution);
-	        console.log(lib.brightRed('Encontre una solucion'));
+	        trazarRuta(nodoEvaluado, solution); //console.log(colors.brightRed('Encontre una solucion'));
+
 	        return {
 	          solution,
 	          level

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 if [ $# -le 0 ]; then
     echo "Modo de uso: ${0} <metodo(1, 2 ó 3)> <directorio del nivel>"
+    echo "Modo de uso: 1 para Amplitud - 2 para Profundidad - 3 para Profundidad Iterativa"
     echo "Ejemplo: ${0} 1 Niveles/nivel1.txt"
     exit -1;
 fi
